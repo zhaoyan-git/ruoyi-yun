@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.StructureMonitoringFactorsMapper">
+    
+    <resultMap type="StructureMonitoringFactors" id="StructureMonitoringFactorsResult">
+        <result property="id"    column="id"    />
+        <result property="structureId"    column="structure_id"    />
+        <result property="mfId"    column="mf_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStructureMonitoringFactorsVo">
+        select id, structure_id, mf_id, create_by, create_time, update_by, update_time from structure_monitoring_factors
+    </sql>
+
+    <select id="selectStructureMonitoringFactorsList" parameterType="StructureMonitoringFactors" resultMap="StructureMonitoringFactorsResult">
+        <include refid="selectStructureMonitoringFactorsVo"/>
+        <where>  
+            <if test="structureId != null "> and structure_id = #{structureId}</if>
+            <if test="mfId != null "> and mf_id = #{mfId}</if>
+        </where>
+    </select>
+    
+    <select id="selectStructureMonitoringFactorsById" parameterType="Long" resultMap="StructureMonitoringFactorsResult">
+        <include refid="selectStructureMonitoringFactorsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStructureMonitoringFactors" parameterType="StructureMonitoringFactors" useGeneratedKeys="true" keyProperty="id">
+        insert into structure_monitoring_factors
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="structureId != null">structure_id,</if>
+            <if test="mfId != null">mf_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="structureId != null">#{structureId},</if>
+            <if test="mfId != null">#{mfId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStructureMonitoringFactors" parameterType="StructureMonitoringFactors">
+        update structure_monitoring_factors
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="structureId != null">structure_id = #{structureId},</if>
+            <if test="mfId != null">mf_id = #{mfId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStructureMonitoringFactorsById" parameterType="Long">
+        delete from structure_monitoring_factors where id = #{id}
+    </delete>
+
+    <delete id="deleteStructureMonitoringFactorsByIds" parameterType="String">
+        delete from structure_monitoring_factors where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

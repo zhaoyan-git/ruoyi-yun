@@ -61,6 +61,12 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
+        <!-- 文兴创信 -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>cloud-monitoring-platform</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

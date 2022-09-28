@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.MeasuringPointMapper">
+    
+    <resultMap type="MeasuringPoint" id="MeasuringPointResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="mfId"    column="mf_id"    />
+        <result property="dataSourceTypeId"    column="data_source_type_id"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="groupName"    column="group_name"    />
+        <result property="structureId"    column="structure_id"    />
+        <result property="lev"    column="lev"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="mfName"    column="mf_name"    />
+    </resultMap>
+
+    <sql id="selectMeasuringPointVo">
+        select mp.id, mp.name, mp.mf_id, mp.data_source_type_id, mp.equipment_id, mp.group_name, mp.structure_id, mp.lev,
+               mp.parent_id, mp.create_by, mp.create_time, mp.update_by, mp.update_time , a.name as equipment_name, c.dict_label as mf_name
+        from measuring_point mp
+        left join equipment a on mp.equipment_id = a.id
+        left join sys_dict_data c on mp.mf_id = c.dict_value and c.dict_type = 'monitoring_factors'
+    </sql>
+
+    <select id="selectMeasuringPointList" parameterType="MeasuringPoint" resultMap="MeasuringPointResult">
+        <include refid="selectMeasuringPointVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and mp.name like concat('%', #{name}, '%')</if>
+            <if test="mfId != null  and mfId != ''"> and mp.mf_id = #{mfId}</if>
+            <if test="dataSourceTypeId != null "> and mp.data_source_type_id = #{dataSourceTypeId}</if>
+            <if test="equipmentId != null "> and mp.equipment_id = #{equipmentId}</if>
+            <if test="groupName != null  and groupName != ''"> and mp.group_name like concat('%', #{groupName}, '%')</if>
+            <if test="structureId != null "> and mp.structure_id = #{structureId}</if>
+            <if test="lev != null "> and mp.lev = #{lev}</if>
+            <if test="parentId != null "> and mp.parent_id = #{parentId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMeasuringPointById" parameterType="Long" resultMap="MeasuringPointResult">
+        <include refid="selectMeasuringPointVo"/>
+        where mp.id = #{id}
+    </select>
+        
+    <insert id="insertMeasuringPoint" parameterType="MeasuringPoint" useGeneratedKeys="true" keyProperty="id">
+        insert into measuring_point
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="mfId != null">mf_id,</if>
+            <if test="dataSourceTypeId != null">data_source_type_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="groupName != null">group_name,</if>
+            <if test="structureId != null">structure_id,</if>
+            <if test="lev != null">lev,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="mfId != null">#{mfId},</if>
+            <if test="dataSourceTypeId != null">#{dataSourceTypeId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="groupName != null">#{groupName},</if>
+            <if test="structureId != null">#{structureId},</if>
+            <if test="lev != null">#{lev},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMeasuringPoint" parameterType="MeasuringPoint">
+        update measuring_point
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="mfId != null">mf_id = #{mfId},</if>
+            <if test="dataSourceTypeId != null">data_source_type_id = #{dataSourceTypeId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="groupName != null">group_name = #{groupName},</if>
+            <if test="structureId != null">structure_id = #{structureId},</if>
+            <if test="lev != null">lev = #{lev},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMeasuringPointById" parameterType="Long">
+        delete from measuring_point where id = #{id}
+    </delete>
+
+    <delete id="deleteMeasuringPointByIds" parameterType="String">
+        delete from measuring_point where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

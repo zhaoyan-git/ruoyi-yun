@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.CollectionStrategyMapper">
+
+    <resultMap type="CollectionStrategy" id="CollectionStrategyResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="businessId" column="business_id"/>
+        <result property="svalue" column="svalue"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="equipmentId" column="equipment_id"/>
+    </resultMap>
+
+    <sql id="selectCollectionStrategyVo">
+        select id,
+               name,
+               business_id,
+               svalue,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               equipment_id
+        from collection_strategy
+    </sql>
+
+    <select id="selectCollectionStrategyList" parameterType="CollectionStrategy" resultMap="CollectionStrategyResult">
+        <include refid="selectCollectionStrategyVo"/>
+        <where>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="businessId != null ">and business_id = #{businessId}</if>
+            <if test="svalue != null ">and svalue = #{svalue}</if>
+            <if test="equipmentId != null ">and equipment_id = #{equipmentId}</if>
+        </where>
+    </select>
+
+    <select id="selectCollectionStrategyById" parameterType="Long" resultMap="CollectionStrategyResult">
+        <include refid="selectCollectionStrategyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCollectionStrategy" parameterType="CollectionStrategy" useGeneratedKeys="true" keyProperty="id">
+        insert into collection_strategy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="svalue != null">svalue,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="svalue != null">#{svalue},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCollectionStrategy" parameterType="CollectionStrategy">
+        update collection_strategy
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="svalue != null">svalue = #{svalue},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCollectionStrategyById" parameterType="Long">
+        delete
+        from collection_strategy
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCollectionStrategyByIds" parameterType="String">
+        delete from collection_strategy where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

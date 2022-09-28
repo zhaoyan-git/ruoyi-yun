@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ProjectAlarmRecordMapper">
+    
+    <resultMap type="ProjectAlarmRecord" id="ProjectAlarmRecordResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="readFlag"    column="read_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProjectAlarmRecordVo">
+        select id, title, content, project_id, read_flag, create_time, update_time from project_alarm_record
+    </sql>
+
+    <select id="selectProjectAlarmRecordList" parameterType="ProjectAlarmRecord" resultMap="ProjectAlarmRecordResult">
+        <include refid="selectProjectAlarmRecordVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="readFlag != null  and readFlag != ''"> and read_flag = #{readFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectAlarmRecordById" parameterType="Long" resultMap="ProjectAlarmRecordResult">
+        <include refid="selectProjectAlarmRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectAlarmRecord" parameterType="ProjectAlarmRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into project_alarm_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="readFlag != null">read_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">#{title},</if>
+            <if test="content != null">#{content},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="readFlag != null">#{readFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectAlarmRecord" parameterType="ProjectAlarmRecord">
+        update project_alarm_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="readFlag != null">read_flag = #{readFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectAlarmRecordById" parameterType="Long">
+        delete from project_alarm_record where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectAlarmRecordByIds" parameterType="String">
+        delete from project_alarm_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

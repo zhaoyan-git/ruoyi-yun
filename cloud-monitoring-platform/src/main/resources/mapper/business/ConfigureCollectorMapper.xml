@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ConfigureCollectorMapper">
+    
+    <resultMap type="ConfigureCollector" id="ConfigureCollectorResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="product"    column="product"    />
+        <result property="model"    column="model"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="moduleNo"    column="module_no"    />
+        <result property="no"    column="no"    />
+        <result property="csId"    column="cs_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="businessId"    column="business_id"    />
+    </resultMap>
+
+    <sql id="selectConfigureCollectorVo">
+        select id, business_id,dept_id, product, model, equipment_id, module_no, no, cs_id, remark, create_by, create_time, update_by, update_time from configure_collector
+    </sql>
+
+    <select id="selectConfigureCollectorList" parameterType="ConfigureCollector" resultMap="ConfigureCollectorResult">
+        <include refid="selectConfigureCollectorVo"/>
+        <where>  
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="product != null  and product != ''"> and product = #{product}</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
+            <if test="moduleNo != null  and moduleNo != ''"> and module_no = #{moduleNo}</if>
+            <if test="no != null  and no != ''"> and no = #{no}</if>
+            <if test="csId != null "> and cs_id = #{csId}</if>
+            <if test="businessId != null "> and business_id = #{businessId}</if>
+        </where>
+    </select>
+    
+    <select id="selectConfigureCollectorById" parameterType="Long" resultMap="ConfigureCollectorResult">
+        <include refid="selectConfigureCollectorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertConfigureCollector" parameterType="ConfigureCollector" useGeneratedKeys="true" keyProperty="id">
+        insert into configure_collector
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="product != null">product,</if>
+            <if test="model != null">model,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moduleNo != null">module_no,</if>
+            <if test="no != null">no,</if>
+            <if test="csId != null">cs_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="businessId != null">business_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="product != null">#{product},</if>
+            <if test="model != null">#{model},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moduleNo != null">#{moduleNo},</if>
+            <if test="no != null">#{no},</if>
+            <if test="csId != null">#{csId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="businessId != null">#{businessId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigureCollector" parameterType="ConfigureCollector">
+        update configure_collector
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="product != null">product = #{product},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moduleNo != null">module_no = #{moduleNo},</if>
+            <if test="no != null">no = #{no},</if>
+            <if test="csId != null">cs_id = #{csId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteConfigureCollectorById" parameterType="Long">
+        delete from configure_collector where id = #{id}
+    </delete>
+
+    <delete id="deleteConfigureCollectorByIds" parameterType="String">
+        delete from configure_collector where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.DeviceGatewayMapper">
+    
+    <resultMap type="DeviceGateway" id="DeviceGatewayResult">
+        <result property="id"    column="id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="name"    column="name"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="modelNumber"    column="model_number"    />
+        <result property="detail"    column="detail"    />
+        <result property="simNumber"    column="sim_number"    />
+        <result property="dtuId"    column="dtu_id"    />
+        <result property="onlineFlag"    column="online_flag"    />
+        <result property="ip"    column="ip"    />
+        <result property="positionLat"    column="position_lat"    />
+        <result property="positionLng"    column="position_lng"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="manufacturerName"    column="manufacturer_name"    />
+    </resultMap>
+
+    <sql id="selectDeviceGatewayVo">
+        select a.id, a.project_id, a.name, a.manufacturer, a.model_number, a.detail, a.sim_number, a.dtu_id, a.online_flag, a.ip,
+               a.position_lat, a.position_lng, a.del_flag, a.create_by, a.create_time, a.update_by, a.update_time,
+               b.name as project_name , c.dept_name as manufacturer_name
+        from device_gateway a
+        left join project b on a.project_id = b.id
+        left join sys_dept c on a.manufacturer = c.dept_id
+    </sql>
+
+    <select id="selectDeviceGatewayList" parameterType="DeviceGateway" resultMap="DeviceGatewayResult">
+        <include refid="selectDeviceGatewayVo"/>
+        <where>  
+            <if test="projectId != null "> and a.project_id = #{projectId}</if>
+            <if test="name != null  and name != ''"> and a.name like concat('%', #{name}, '%')</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and a.manufacturer = #{manufacturer}</if>
+            <if test="modelNumber != null  and modelNumber != ''"> and a.model_number = #{modelNumber}</if>
+            <if test="detail != null  and detail != ''"> and a.detail = #{detail}</if>
+            <if test="simNumber != null  and simNumber != ''"> and a.sim_number = #{simNumber}</if>
+            <if test="dtuId != null  and dtuId != ''"> and a.dtu_id = #{dtuId}</if>
+            <if test="onlineFlag != null  and onlineFlag != ''"> and a.online_flag = #{onlineFlag}</if>
+            <if test="ip != null  and ip != ''"> and a.ip = #{ip}</if>
+            <if test="positionLat != null  and positionLat != ''"> and a.position_lat = #{positionLat}</if>
+            <if test="positionLng != null  and positionLng != ''"> and a.position_lng = #{positionLng}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceGatewayById" parameterType="Long" resultMap="DeviceGatewayResult">
+        <include refid="selectDeviceGatewayVo"/>
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertDeviceGateway" parameterType="DeviceGateway" useGeneratedKeys="true" keyProperty="id">
+        insert into device_gateway
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="name != null">name,</if>
+            <if test="manufacturer != null">manufacturer,</if>
+            <if test="modelNumber != null">model_number,</if>
+            <if test="detail != null">detail,</if>
+            <if test="simNumber != null">sim_number,</if>
+            <if test="dtuId != null">dtu_id,</if>
+            <if test="onlineFlag != null">online_flag,</if>
+            <if test="ip != null">ip,</if>
+            <if test="positionLat != null">position_lat,</if>
+            <if test="positionLng != null">position_lng,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="manufacturer != null">#{manufacturer},</if>
+            <if test="modelNumber != null">#{modelNumber},</if>
+            <if test="detail != null">#{detail},</if>
+            <if test="simNumber != null">#{simNumber},</if>
+            <if test="dtuId != null">#{dtuId},</if>
+            <if test="onlineFlag != null">#{onlineFlag},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="positionLat != null">#{positionLat},</if>
+            <if test="positionLng != null">#{positionLng},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceGateway" parameterType="DeviceGateway">
+        update device_gateway
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="modelNumber != null">model_number = #{modelNumber},</if>
+            <if test="detail != null">detail = #{detail},</if>
+            <if test="simNumber != null">sim_number = #{simNumber},</if>
+            <if test="dtuId != null">dtu_id = #{dtuId},</if>
+            <if test="onlineFlag != null">online_flag = #{onlineFlag},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="positionLat != null">position_lat = #{positionLat},</if>
+            <if test="positionLng != null">position_lng = #{positionLng},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDeviceGatewayById" parameterType="Long">
+        delete from device_gateway where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceGatewayByIds" parameterType="String">
+        delete from device_gateway where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

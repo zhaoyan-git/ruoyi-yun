@@ -479,6 +479,7 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
+
       deptTreeSelect().then(response => {
         this.deptOptions = response.data;
       });

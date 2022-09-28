@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.EquipmentMapper">
+
+    <resultMap type="Equipment" id="EquipmentResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="businessId" column="business_id"/>
+        <result property="model" column="model"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="equipmentId" column="equipment_id"/>
+        <result property="sim" column="sim"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deptName" column="dept_name"/>
+    </resultMap>
+
+    <sql id="selectEquipmentVo">
+        select e.id,
+               e.name,
+               e.business_id,
+               e.model,
+               e.manufacturer,
+               e.equipment_id,
+               e.sim,
+               e.remark,
+               e.create_by,
+               e.create_time,
+               e.update_by,
+               e.update_time,
+               sd.dept_name
+        from equipment e
+                 left join sys_dept sd on e.manufacturer = sd.dept_id
+    </sql>
+
+    <select id="selectEquipmentList" parameterType="Equipment" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        <where>
+            <if test="name != null  and name != ''">and e.name like concat('%', #{name}, '%')</if>
+            <if test="businessId != null ">and e.business_id = #{businessId}</if>
+            <if test="model != null  and model != ''">and e.model = #{model}</if>
+            <if test="manufacturer != null  and manufacturer != ''">and e.manufacturer = #{manufacturer}</if>
+            <if test="equipmentId != null  and equipmentId != ''">and e.equipment_id = #{equipmentId}</if>
+            <if test="sim != null  and sim != ''">and e.sim = #{sim}</if>
+            <if test="businessIdIsNull != null  and businessIdIsNull == '1'">and e.business_id is not null </if>
+        </where>
+    </select>
+
+    <select id="selectEquipmentById" parameterType="Long" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEquipment" parameterType="Equipment" useGeneratedKeys="true" keyProperty="id">
+        insert into equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="model != null">model,</if>
+            <if test="manufacturer != null">manufacturer,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="sim != null">sim,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="model != null">#{model},</if>
+            <if test="manufacturer != null">#{manufacturer},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="sim != null">#{sim},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEquipment" parameterType="Equipment">
+        update equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="sim != null">sim = #{sim},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteStructureForEquipment" parameterType="Equipment">
+        update equipment set business_id = null
+        where id = #{id}
+    </update>
+
+
+
+    <delete id="deleteEquipmentById" parameterType="Long">
+        delete
+        from equipment
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteEquipmentByIds" parameterType="String">
+        delete from equipment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

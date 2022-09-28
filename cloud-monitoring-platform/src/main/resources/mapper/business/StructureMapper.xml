@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.StructureMapper">
+
+    <resultMap type="Structure" id="StructureResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="typeId" column="type_id"/>
+        <result property="photoFile" column="photo_file"/>
+        <result property="projectId" column="project_id"/>
+        <result property="alarmFlag" column="alarm_flag"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="projectName" column="project_name"/>
+        <result property="positionLat" column="position_lat"/>
+        <result property="positionLng" column="position_lng"/>
+        <result property="location" column="location"/>
+        <result property="monitoringPurpose" column="monitoring_purpose"/>
+        <result property="monitoringBasis" column="monitoring_basis"/>
+        <result property="dedc" column="dedc"/>
+        <result property="constructionUnit" column="construction_unit"/>
+        <result property="constructionPserson" column="construction_pserson"/>
+        <result property="constructionPhone" column="construction_phone"/>
+        <result property="manageUnit" column="manage_unit"/>
+        <result property="managePerson" column="manage_person"/>
+        <result property="managePhone" column="manage_phone"/>
+    </resultMap>
+
+    <sql id="selectStructureVo">
+        select s.id,
+               s.name,
+               p.name as project_name,
+               s.type_id,
+               s.photo_file,
+               s.project_id,
+               s.alarm_flag,
+               s.del_flag,
+               s.create_by,
+               s.create_time,
+               s.update_by,
+               s.update_time,
+               s.position_lat,
+               s.position_lng,
+               s.location,
+               s.monitoring_purpose,
+               s.monitoring_basis,
+               s.dedc,
+               s.construction_unit,
+               s.construction_pserson,
+               s.construction_phone,
+               s.manage_unit,
+               s.manage_person,
+               s.manage_phone
+        from structure s
+                 left join project p on s.project_id = p.id
+    </sql>
+
+    <select id="selectStructureList" parameterType="Structure" resultMap="StructureResult">
+        <include refid="selectStructureVo"/>
+        <where>
+            <if test="name != null  and name != ''">and s.name like concat('%', #{name}, '%')</if>
+            <if test="typeId != null ">and s.type_id = #{typeId}</if>
+            <if test="photoFile != null  and photoFile != ''">and s.photo_file = #{photoFile}</if>
+            <if test="projectId != null ">and s.project_id = #{projectId}</if>
+            <if test="alarmFlag != null  and alarmFlag != ''">and s.alarm_flag = #{alarmFlag}</if>
+        </where>
+        order by s.id
+    </select>
+
+    <select id="selectStructureById" parameterType="Long" resultMap="StructureResult">
+        <include refid="selectStructureVo"/>
+        where s.id = #{id}
+    </select>
+
+    <insert id="insertStructure" parameterType="Structure" useGeneratedKeys="true" keyProperty="id">
+        insert into structure
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="photoFile != null">photo_file,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="alarmFlag != null">alarm_flag,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+
+            <if test="positionLat != null">position_lat,</if>
+            <if test="positionLng != null">position_lng,</if>
+            <if test="location != null">location,</if>
+            <if test="monitoringPurpose != null">monitoring_purpose,</if>
+            <if test="monitoringBasis != null">monitoring_basis,</if>
+            <if test="dedc != null">dedc,</if>
+            <if test="constructionUnit != null">construction_unit,</if>
+            <if test="constructionPserson != null">construction_pserson,</if>
+            <if test="constructionPhone != null">construction_phone,</if>
+            <if test="manageUnit != null">manage_unit,</if>
+            <if test="managePerson != null">manage_person,</if>
+            <if test="managePhone != null">manage_phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="photoFile != null">#{photoFile},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="alarmFlag != null">#{alarmFlag},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+
+            <if test="positionLat != null">#{positionLat},</if>
+            <if test="positionLng != null">#{positionLng},</if>
+            <if test="location != null">#{location},</if>
+            <if test="monitoringPurpose != null">#{monitoringPurpose},</if>
+            <if test="monitoringBasis != null">#{monitoringBasis},</if>
+            <if test="dedc != null">#{dedc},</if>
+            <if test="constructionUnit != null">#{constructionUnit},</if>
+            <if test="constructionPserson != null">#{constructionPserson},</if>
+            <if test="constructionPhone != null">#{constructionPhone},</if>
+            <if test="manageUnit != null">#{manageUnit},</if>
+            <if test="managePerson != null">#{managePerson},</if>
+            <if test="managePhone != null">#{managePhone},</if>
+        </trim>
+    </insert>
+
+    <update id="updateStructure" parameterType="Structure">
+        update structure
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="photoFile != null">photo_file = #{photoFile},</if>
+            <if test="projectId != ''">project_id = #{projectId},</if>
+            <if test="alarmFlag != null">alarm_flag = #{alarmFlag},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="positionLat != null">position_lat = #{positionLat},</if>
+            <if test="positionLng != null">position_lng = #{positionLng},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="monitoringPurpose != null">monitoring_purpose = #{monitoringPurpose},</if>
+            <if test="monitoringBasis != null">monitoring_basis = #{monitoringBasis},</if>
+            <if test="dedc != null">dedc = #{dedc},</if>
+            <if test="constructionUnit != null">construction_unit = #{constructionUnit},</if>
+            <if test="constructionPserson != null">construction_pserson = #{constructionPserson},</if>
+            <if test="constructionPhone != null">construction_phone = #{constructionPhone},</if>
+            <if test="manageUnit != null">manage_unit = #{manageUnit},</if>
+            <if test="managePerson != null">manage_person = #{managePerson},</if>
+            <if test="managePhone != null">manage_phone = #{managePhone},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStructureById" parameterType="Long">
+        delete
+        from structure
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteStructureByIds" parameterType="String">
+        delete from structure where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

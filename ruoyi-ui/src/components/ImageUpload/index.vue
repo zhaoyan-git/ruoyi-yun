@@ -19,7 +19,7 @@
     >
       <i class="el-icon-plus"></i>
     </el-upload>
-    
+
     <!-- 上传提示 -->
     <div class="el-upload__tip" slot="tip" v-if="showTip">
       请上传
@@ -46,6 +46,7 @@
 import { getToken } from "@/utils/auth";
 
 export default {
+  name: "ImageUpload",
   props: {
     value: [String, Object, Array],
     // 图片数量限制
@@ -186,6 +187,7 @@ export default {
         this.number = 0;
         this.$emit("input", this.listToString(this.fileList));
         this.$modal.closeLoading();
+        this.$emit('ok', this.fileList);
       }
     },
     // 预览

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ConfigureSensorMapper">
+    
+    <resultMap type="ConfigureSensor" id="ConfigureSensorResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="product"    column="product"    />
+        <result property="model"    column="model"    />
+        <result property="moduleNo"    column="module_no"    />
+        <result property="channelNo"    column="channel_no"    />
+        <result property="no"    column="no"    />
+        <result property="formula"    column="formula"    />
+        <result property="expression"    column="expression"    />
+        <result property="batchadd"    column="batchAdd"    />
+        <result property="batchaddvalue"    column="batchAddValue"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectConfigureSensorVo">
+        select id, dept_id, business_id,equipment_id, product, model, module_no, channel_no, no, formula, expression, batchAdd, batchAddValue, remark, create_by, create_time, update_by, update_time from configure_sensor
+    </sql>
+
+    <select id="selectConfigureSensorList" parameterType="ConfigureSensor" resultMap="ConfigureSensorResult">
+        <include refid="selectConfigureSensorVo"/>
+        <where>  
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="businessId != null "> and business_id = #{businessId}</if>
+            <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
+            <if test="product != null  and product != ''"> and product = #{product}</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="moduleNo != null  and moduleNo != ''"> and module_no = #{moduleNo}</if>
+            <if test="channelNo != null  and channelNo != ''"> and channel_no = #{channelNo}</if>
+            <if test="no != null  and no != ''"> and no = #{no}</if>
+            <if test="formula != null  and formula != ''"> and formula = #{formula}</if>
+            <if test="expression != null  and expression != ''"> and expression = #{expression}</if>
+            <if test="batchadd != null  and batchadd != ''"> and batchAdd = #{batchadd}</if>
+            <if test="batchaddvalue != null "> and batchAddValue = #{batchaddvalue}</if>
+        </where>
+    </select>
+    
+    <select id="selectConfigureSensorById" parameterType="Long" resultMap="ConfigureSensorResult">
+        <include refid="selectConfigureSensorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertConfigureSensor" parameterType="ConfigureSensor" useGeneratedKeys="true" keyProperty="id">
+        insert into configure_sensor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="product != null">product,</if>
+            <if test="model != null">model,</if>
+            <if test="moduleNo != null">module_no,</if>
+            <if test="channelNo != null">channel_no,</if>
+            <if test="no != null">no,</if>
+            <if test="formula != null">formula,</if>
+            <if test="expression != null">expression,</if>
+            <if test="batchadd != null">batchAdd,</if>
+            <if test="batchaddvalue != null">batchAddValue,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="product != null">#{product},</if>
+            <if test="model != null">#{model},</if>
+            <if test="moduleNo != null">#{moduleNo},</if>
+            <if test="channelNo != null">#{channelNo},</if>
+            <if test="no != null">#{no},</if>
+            <if test="formula != null">#{formula},</if>
+            <if test="expression != null">#{expression},</if>
+            <if test="batchadd != null">#{batchadd},</if>
+            <if test="batchaddvalue != null">#{batchaddvalue},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigureSensor" parameterType="ConfigureSensor">
+        update configure_sensor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="product != null">product = #{product},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="moduleNo != null">module_no = #{moduleNo},</if>
+            <if test="channelNo != null">channel_no = #{channelNo},</if>
+            <if test="no != null">no = #{no},</if>
+            <if test="formula != null">formula = #{formula},</if>
+            <if test="expression != null">expression = #{expression},</if>
+            <if test="batchadd != null">batchAdd = #{batchadd},</if>
+            <if test="batchaddvalue != null">batchAddValue = #{batchaddvalue},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteConfigureSensorById" parameterType="Long">
+        delete from configure_sensor where id = #{id}
+    </delete>
+
+    <delete id="deleteConfigureSensorByIds" parameterType="String">
+        delete from configure_sensor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

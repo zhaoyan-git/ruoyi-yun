@@ -186,8 +186,15 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>cloud-monitoring-platform</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
+1
 
     <modules>
         <module>ruoyi-admin</module>
@@ -196,6 +203,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
+        <module>cloud-monitoring-platform</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -46,12 +46,22 @@ public class SysDept extends BaseEntity
     /** 部门状态:0正常,1停用 */
     private String status;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
     /** 父部门名称 */
     private String parentName;
-    
+
+    private String type;
+
     /** 子部门 */
     private List<SysDept> children = new ArrayList<SysDept>();
 

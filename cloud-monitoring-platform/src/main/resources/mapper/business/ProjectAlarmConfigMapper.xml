@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ProjectAlarmConfigMapper">
+    
+    <resultMap type="ProjectAlarmConfig" id="ProjectAlarmConfigResult">
+        <result property="id"    column="id"    />
+        <result property="pointId"    column="point_id"    />
+        <result property="alarmLevel"    column="alarm_level"    />
+        <result property="threshold"    column="threshold"    />
+        <result property="computeType"    column="compute_type"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="structureId"    column="structure_id"    />
+        <result property="pointName"    column="point_name"    />
+    </resultMap>
+
+    <sql id="selectProjectAlarmConfigVo">
+        select a.id, a.point_id,a.project_id,a.structure_id, a.alarm_level, a.threshold, a.compute_type, a.title, a.content, a.create_time, a.update_time , b.name as point_name
+        from project_alarm_config a
+        left join measuring_point b on a.point_id = b.id
+    </sql>
+
+    <select id="selectProjectAlarmConfigList" parameterType="ProjectAlarmConfig" resultMap="ProjectAlarmConfigResult">
+        <include refid="selectProjectAlarmConfigVo"/>
+        <where>  
+            <if test="pointId != null "> and point_id = #{pointId}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="structureId != null "> and structure_id = #{structureId}</if>
+            <if test="alarmLevel != null  and alarmLevel != ''"> and alarm_level = #{alarmLevel}</if>
+            <if test="threshold != null "> and threshold = #{threshold}</if>
+            <if test="computeType != null  and computeType != ''"> and compute_type = #{computeType}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectAlarmConfigById" parameterType="Long" resultMap="ProjectAlarmConfigResult">
+        <include refid="selectProjectAlarmConfigVo"/>
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertProjectAlarmConfig" parameterType="ProjectAlarmConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into project_alarm_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pointId != null">point_id,</if>
+            <if test="alarmLevel != null">alarm_level,</if>
+            <if test="threshold != null">threshold,</if>
+            <if test="computeType != null">compute_type,</if>
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="structureId != null">structure_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pointId != null">#{pointId},</if>
+            <if test="alarmLevel != null">#{alarmLevel},</if>
+            <if test="threshold != null">#{threshold},</if>
+            <if test="computeType != null">#{computeType},</if>
+            <if test="title != null">#{title},</if>
+            <if test="content != null">#{content},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="structureId != null">#{structureId},</if>
+         </trim>
+    </insert>
+    <update id="updateProjectAlarmConfig" parameterType="ProjectAlarmConfig">
+        update project_alarm_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pointId != null">point_id = #{pointId},</if>
+            <if test="alarmLevel != null">alarm_level = #{alarmLevel},</if>
+            <if test="threshold != null">threshold = #{threshold},</if>
+            <if test="computeType != null">compute_type = #{computeType},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="structureId != null">structure_id = #{structureId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectAlarmConfigById" parameterType="Long">
+        delete from project_alarm_config where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectAlarmConfigByIds" parameterType="String">
+        delete from project_alarm_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

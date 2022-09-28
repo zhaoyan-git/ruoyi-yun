@@ -50,3 +50,12 @@ export function delDept(deptId) {
     method: 'delete'
   })
 }
+
+//查询部门下拉树
+export function getTreeselectList(query) {
+  return request({
+    url: '/system/dept/treeselect',
+    method: 'get',
+    params: query
+  })
+}
