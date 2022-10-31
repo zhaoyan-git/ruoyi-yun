@@ -47,7 +47,7 @@
             <if test="manufacturer != null  and manufacturer != ''">and e.manufacturer = #{manufacturer}</if>
             <if test="equipmentId != null  and equipmentId != ''">and e.equipment_id = #{equipmentId}</if>
             <if test="sim != null  and sim != ''">and e.sim = #{sim}</if>
-            <if test="businessIdIsNull != null  and businessIdIsNull == '1'">and e.business_id is not null </if>
+            <if test="businessIdIsNull != null  and businessIdIsNull == 1">and e.business_id is  null </if>
         </where>
     </select>
 
