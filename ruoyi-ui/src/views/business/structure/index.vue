@@ -314,8 +314,8 @@
     </el-dialog>
 
     <!--设备列表-->
-    <el-dialog :title="equipment.title" :visible.sync="equipment.open" width="1000px" append-to-body>
-      <EquipmentList ref="equipmentList" :selectIds="equipment.selectIds" @ok="equipmentForOkFun"></EquipmentList>
+    <el-dialog :title="equipment.title" :visible.sync="equipment.open"  v-if="equipment.open"  width="1000px" append-to-body>
+      <EquipmentList ref="equipmentList" :selectIds="equipment.selectIds" :sid="equipment.sid" @ok="equipmentForOkFun"></EquipmentList>
     </el-dialog>
     <!--采集策略-->
     <el-dialog :title="strategy.title" :visible.sync="strategy.open" width="700px" append-to-body>
@@ -427,6 +427,7 @@ export default {
         title: '',
         equipmentList: [], //设备表格数据
         selectIds: [],
+        sid:'',
       },
       //采集策略对象
       strategy: {

@@ -23,7 +23,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['cmp:solution:add']"
+          v-hasPermi="['cmp:aboutus:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -34,7 +34,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['cmp:solution:edit']"
+          v-hasPermi="['cmp:aboutus:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -45,15 +45,26 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['cmp:solution:remove']"
+          v-hasPermi="['cmp:aboutus:remove']"
         >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['cmp:aboutus:export']"
+        >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="solutionList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="aboutusList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="标题" align="center" prop="title" />
+      <el-table-column label="内容" align="center" prop="content" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -62,14 +73,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['cmp:solution:edit']"
+            v-hasPermi="['cmp:aboutus:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['cmp:solution:remove']"
+            v-hasPermi="['cmp:aboutus:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -83,8 +94,8 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改解决方案对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
+    <!-- 添加或修改关于我们对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" />
@@ -93,7 +104,7 @@
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" type="textarea" />
+          <el-input v-model="form.remark" placeholder="请输入备注" type="textarea"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -105,10 +116,10 @@
 </template>
 
 <script>
-import { listSolution, getSolution, delSolution, addSolution, updateSolution } from "@/api/business/solution";
+import { listAboutus, getAboutus, delAboutus, addAboutus, updateAboutus } from "@/api/business/aboutus";
 
 export default {
-  name: "Solution",
+  name: "Aboutus",
   data() {
     return {
       // 遮罩层
@@ -123,8 +134,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 解决方案表格数据
-      solutionList: [],
+      // 关于我们表格数据
+      aboutusList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -150,11 +161,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询解决方案列表 */
+    /** 查询关于我们列表 */
     getList() {
       this.loading = true;
-      listSolution(this.queryParams).then(response => {
-        this.solutionList = response.rows;
+      listAboutus(this.queryParams).then(response => {
+        this.aboutusList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -198,16 +209,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加解决方案";
+      this.title = "添加关于我们";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getSolution(id).then(response => {
+      getAboutus(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改解决方案";
+        this.title = "修改关于我们";
       });
     },
     /** 提交按钮 */
@@ -215,13 +226,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateSolution(this.form).then(response => {
+            updateAboutus(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSolution(this.form).then(response => {
+            addAboutus(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -233,8 +244,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除解决方案编号为"' + ids + '"的数据项？').then(function() {
-        return delSolution(ids);
+      this.$modal.confirm('是否确认删除关于我们编号为"' + ids + '"的数据项？').then(function() {
+        return delAboutus(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -242,9 +253,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('cmp/solution/export', {
+      this.download('cmp/aboutus/export', {
         ...this.queryParams
-      }, `solution_${new Date().getTime()}.xlsx`)
+      }, `aboutus_${new Date().getTime()}.xlsx`)
     }
   }
 };
