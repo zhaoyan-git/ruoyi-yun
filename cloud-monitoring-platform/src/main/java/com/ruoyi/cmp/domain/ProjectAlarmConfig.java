@@ -58,7 +58,7 @@ public class ProjectAlarmConfig extends BaseEntity
 
     /** 阈值 */
     @Excel(name = "阈值")
-    private Double threshold;
+    private Long threshold;
 
     /** 计算方式 */
     @Excel(name = "计算方式")
@@ -95,19 +95,19 @@ public class ProjectAlarmConfig extends BaseEntity
         this.alarmLevel = alarmLevel;
     }
 
-    public Double getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
-    }
-
-    public String getAlarmLevel()
+    public String getAlarmLevel() 
     {
         return alarmLevel;
     }
+    public void setThreshold(Long threshold) 
+    {
+        this.threshold = threshold;
+    }
 
+    public Long getThreshold() 
+    {
+        return threshold;
+    }
     public void setComputeType(String computeType) 
     {
         this.computeType = computeType;
