@@ -102,214 +102,253 @@
     </el-row>
 
     <!-- 添加或修改结构物对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1100px" append-to-body custom-class="innerDialog">
-      <div>
-        <div class="left_div" v-if="isUpdate">
-          <ul class="list-group list-group-striped">
-            <li class="list-group-item" style="cursor: pointer;" @click="switchTabFun('baseInfo')">
-              <svg-icon icon-class="user"/>
-              <p>基础信息</p>
-            </li>
-            <li class="list-group-item" style="cursor: pointer;" @click="switchTabFun('sbInfo')">
-              <svg-icon icon-class="phone"/>
-              <p>设备组网</p>
-            </li>
-            <li class="list-group-item" style="cursor: pointer;" @click="switchTabFun('cdInfo')">
-              <svg-icon icon-class="email"/>
-              <p>测点布设</p>
-            </li>
-          </ul>
-        </div>
-        <div class="right_div" v-if="baseInfo">
-          <el-form ref="form" :model="form" :rules="rules" label-width="90px">
-            <el-form-item label="名称" prop="name" class="baseFormClass">
-              <el-input v-model="form.name" placeholder="请输入结构物名称"/>
-            </el-form-item>
-            <el-form-item label="精度" prop="positionLat" class="baseFormClass">
-              <el-input v-model="form.positionLat" placeholder="请输入精度"/>
-            </el-form-item>
-            <el-form-item label="纬度" prop="positionLng" class="baseFormClass">
-              <el-input v-model="form.positionLng" placeholder="请输入纬度"/>
-            </el-form-item>
-            <el-form-item label="地址" prop="location" class="baseFormClass">
-              <el-input v-model="form.location" placeholder="请输入地址"/>
-            </el-form-item>
-            <el-form-item label="监测目的" prop="monitoringPurpose" class="baseFormClass">
-              <el-input v-model="form.monitoringPurpose" type="textarea" placeholder="请输入监测目的"/>
-            </el-form-item>
-            <el-form-item label="监测依据" prop="monitoringBasis" class="baseFormClass">
-              <el-input v-model="form.monitoringBasis" placeholder="请输入监测依据"/>
-            </el-form-item>
-            <el-form-item label="示意图" class="baseFormClass">
-              <div style="text-align: left">
-                <image-upload v-model="form.photoFile" :value="fileList"/>
-              </div>
-            </el-form-item>
-            <el-form-item label="描述" prop="dedc" class="baseFormClass">
-              <el-input v-model="form.dedc" type="textarea" placeholder="请输入描述"/>
-            </el-form-item>
-            <el-form-item label="施工单位" prop="constructionUnit" class="baseFormClass">
-              <el-input v-model="form.constructionUnit" placeholder="请输入施工单位"/>
-            </el-form-item>
-            <el-form-item label="联系人" prop="constructionPserson" class="baseFormClass">
-              <el-input v-model="form.constructionPserson" placeholder="请输入联系人"/>
-            </el-form-item>
-            <el-form-item label="联系电话" prop="constructionPhone" class="baseFormClass">
-              <el-input v-model="form.constructionPhone" placeholder="请输入联系电话"/>
-            </el-form-item>
-            <el-form-item label="监理单位" prop="manageUnit" class="baseFormClass">
-              <el-input v-model="form.manageUnit" placeholder="请输入监理单位"/>
-            </el-form-item>
-            <el-form-item label="联系人" prop="managePerson" class="baseFormClass">
-              <el-input v-model="form.managePerson" placeholder="请输入联系人"/>
-            </el-form-item>
-            <el-form-item label="联系电话" prop="managePhone" class="baseFormClass">
-              <el-input v-model="form.managePhone" placeholder="请输入联系电话"/>
-            </el-form-item>
-            <el-form-item label="监测模型" prop="typeId" class="baseFormClass">
-              <div style="text-align: left">
-                <el-select
-                  v-model="form.typeId"
-                  clearable
-                  placeholder="请选择监测模型"
-                >
-                  <el-option
-                    v-for="dict in dict.type.structure_type"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="parseInt(dict.value)"
-                  />
-                </el-select>
-              </div>
-            </el-form-item>
-            <el-form-item label="所属项目" prop="projectId" class="baseFormClass">
-              <div style="text-align: left">
-                <el-select
-                  v-model="form.projectId"
-                  clearable
-                  placeholder="请选择所属项目"
-                >
-                  <el-option
-                    v-for="dict in projectList"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </div>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="right_div" v-if="sbInfo">
-          <el-row :gutter="10" class="mb8">
-            <el-col :span="1.5">
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                size="mini"
-                @click="addEquipmentFun"
-                v-hasPermi="['business:structure:add']"
-              >新增设备
-              </el-button>
-            </el-col>
-            <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-          </el-row>
-          <el-table v-loading="loading" :data="equipment.equipmentList" @selection-change="handleSelectionChange">
-            <el-table-column label="设备名称" align="center" prop="name"/>
-            <el-table-column label="型号" align="center" prop="model"/>
-            <el-table-column label="厂商" align="center" prop="deptName"/>
-            <el-table-column label="设备ID号" align="center" prop="equipmentId"/>
-            <el-table-column label="SIM卡号" align="center" prop="sim"/>
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-              <template slot-scope="scope" style="text-align: center">
-                <el-dropdown size="small">
-                  <el-button type="primary">
-                    更多<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="collectionStrategy(scope.row)"
-                        v-hasPermi="['business:structure:edit']"
-                      >采集策略
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="configureDTU(scope.row)"
-                        v-hasPermi="['business:structure:edit']"
-                      >配置DTU
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="configureCollector(scope.row)"
-                        v-hasPermi="['business:structure:edit']"
-                      >配置采集仪
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="configureSensor(scope.row)"
-                        v-hasPermi="['business:structure:edit']"
-                      >配置传感器
-                      </el-button>
-                    </el-dropdown-item>
-                    <el-dropdown-item>
-                      <el-button
-                        size="mini"
-                        type="text"
-                        icon="el-icon-delete"
-                        @click="handleDeleteEqument(scope.row)"
-                        v-hasPermi="['business:structure:remove']"
-                      >删除
-                      </el-button>
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div class="right_div" v-if="cdInfo">
-          <el-tabs type="border-card">
-            <el-tab-pane label="监测因素">
-              <el-form ref="cdForm" :model="cdForm" label-width="90px">
-                <el-checkbox-group v-model="cdForm.mf">
-                  <el-checkbox v-for="dict in dict.type.monitoring_factors" :label="dict.value" :key="dict.value">
-                    {{ dict.label }}
-                  </el-checkbox>
-                </el-checkbox-group>
-                <div style="margin-top: 20%">
-                  <el-button type="primary" @click="submitMFFun">确 定</el-button>
-                  <el-button @click="cancel">取 消</el-button>
-                </div>
-              </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="测点">
-              <MeasuringPointForm ref="measuringPointForm" :sid="measuringPoint.id" :mf="cdForm.mf"
-                                  @ok="measuringPointForOkFun"></MeasuringPointForm>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </div>
+    <el-dialog :title="title" :visible.sync="open"   width="1100px" append-to-body  >
+      <div >
+        <el-tabs v-model="activeTab" type="border-card" @tab-click="switchTabFun" v-if="open">
+          <el-tab-pane name="baseInfo" label="基础信息" v-if="baseInfo">
+            <div >
+              <el-form ref="form" :model="form" :rules="rules" label-width="90px">
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="名称" prop="name" class="baseFormClass">
+                      <el-input v-model="form.name" placeholder="请输入结构物名称"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="地址" prop="location" class="baseFormClass">
+                      <el-input v-model="form.location" placeholder="请输入地址"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="精度" prop="positionLat" class="baseFormClass">
+                      <el-input v-model="form.positionLat" placeholder="请输入精度"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="纬度" prop="positionLng" class="baseFormClass">
+                      <el-input v-model="form.positionLng" placeholder="请输入纬度"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="监测目的" prop="monitoringPurpose" class="baseFormClass">
+                      <el-input v-model="form.monitoringPurpose" type="textarea" placeholder="请输入监测目的"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="监测依据" prop="monitoringBasis" class="baseFormClass">
+                      <el-input v-model="form.monitoringBasis" placeholder="请输入监测依据"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="24">
+                    <el-form-item label="示意图" class="baseFormClass">
+                      <div style="text-align: left">
+                        <image-upload v-model="form.photoFile" :value="fileList"/>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="24">
+                    <el-form-item label="描述" prop="dedc" class="baseFormClass">
+                      <el-input v-model="form.dedc" type="textarea" placeholder="请输入描述"/>
+                    </el-form-item>
+                  </el-col>
 
-      <div slot="footer" class="dialog-footer" v-if="baseInfo">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-      <div slot="footer" class="dialog-footer" v-if="sbInfo">
-        <el-button type="primary" @click="submitEqumentList">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="施工单位" prop="constructionUnit" class="baseFormClass">
+                      <el-input v-model="form.constructionUnit" placeholder="请输入施工单位"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="联系人" prop="constructionPserson" class="baseFormClass">
+                      <el-input v-model="form.constructionPserson" placeholder="请输入联系人"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="联系电话" prop="constructionPhone" class="baseFormClass">
+                      <el-input v-model="form.constructionPhone" placeholder="请输入联系电话"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="监理单位" prop="manageUnit" class="baseFormClass">
+                      <el-input v-model="form.manageUnit" placeholder="请输入监理单位"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="联系人" prop="managePerson" class="baseFormClass">
+                      <el-input v-model="form.managePerson" placeholder="请输入联系人"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="联系电话" prop="managePhone" class="baseFormClass">
+                      <el-input v-model="form.managePhone" placeholder="请输入联系电话"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="所属项目" prop="projectId" class="baseFormClass">
+                      <div style="text-align: left">
+                        <el-select
+                          v-model="form.projectId"
+                          clearable
+                          placeholder="请选择所属项目"
+                        >
+                          <el-option
+                            v-for="dict in projectList"
+                            :key="dict.value"
+                            :label="dict.label"
+                            :value="dict.value"
+                          />
+                        </el-select>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="监测模型" prop="typeId" class="baseFormClass">
+                      <div style="text-align: left">
+                        <el-select
+                          v-model="form.typeId"
+                          clearable
+                          placeholder="请选择监测模型"
+                        >
+                          <el-option
+                            v-for="dict in dict.type.structure_type"
+                            :key="dict.value"
+                            :label="dict.label"
+                            :value="parseInt(dict.value)"
+                          />
+                        </el-select>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+              <div slot="footer" class="dialog-footer" >
+                <el-button type="primary" @click="submitForm">确 定</el-button>
+                <el-button @click="cancel">取 消</el-button>
+              </div>
+            </div>
+
+          </el-tab-pane>
+          <el-tab-pane name="sbInfo" label="设备组网" v-if="sbInfo">
+            <div >
+              <el-row :gutter="10" class="mb8">
+                <el-col :span="1.5">
+                  <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="addEquipmentFun"
+                    v-hasPermi="['business:structure:add']"
+                  >新增设备
+                  </el-button>
+                </el-col>
+                <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+              </el-row>
+              <el-table v-loading="loading" :data="equipment.equipmentList" @selection-change="handleSelectionChange">
+                <el-table-column label="设备名称" align="center" prop="name"/>
+                <el-table-column label="型号" align="center" prop="model"/>
+                <el-table-column label="厂商" align="center" prop="deptName"/>
+                <el-table-column label="设备ID号" align="center" prop="equipmentId"/>
+                <el-table-column label="SIM卡号" align="center" prop="sim"/>
+                <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                  <template slot-scope="scope" style="text-align: center">
+                    <el-dropdown size="small">
+                      <el-button type="primary">
+                        更多<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
+                      </el-button>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>
+                          <el-button
+                            size="mini"
+                            type="text"
+                            @click="collectionStrategy(scope.row)"
+                            v-hasPermi="['business:structure:edit']"
+                          >采集策略
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button
+                            size="mini"
+                            type="text"
+                            @click="configureDTU(scope.row)"
+                            v-hasPermi="['business:structure:edit']"
+                          >配置DTU
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button
+                            size="mini"
+                            type="text"
+                            @click="configureCollector(scope.row)"
+                            v-hasPermi="['business:structure:edit']"
+                          >配置采集仪
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button
+                            size="mini"
+                            type="text"
+                            @click="configureSensor(scope.row)"
+                            v-hasPermi="['business:structure:edit']"
+                          >配置传感器
+                          </el-button>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                          <el-button
+                            size="mini"
+                            type="text"
+                            icon="el-icon-delete"
+                            @click="handleDeleteEqument(scope.row)"
+                            v-hasPermi="['business:structure:remove']"
+                          >删除
+                          </el-button>
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div slot="footer" class="dialog-footer" v-if="sbInfo">
+              <el-button type="primary" @click="submitEqumentList">确 定</el-button>
+              <el-button @click="cancel">取 消</el-button>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane name="cdInfo" label="测点布设" v-if="cdInfo">
+            <el-tabs  tab-position="left"  v-model="activeCDTab" @tab-click="switchCDTabFun">
+              <el-tab-pane label="监测因素" name="jcys">
+                <el-form ref="cdForm" :model="cdForm" label-width="90px">
+                  <el-checkbox-group v-model="cdForm.mf">
+                    <el-checkbox v-for="dict in dict.type.monitoring_factors" :label="dict.value" :key="dict.value">
+                      {{ dict.label }}
+                    </el-checkbox>
+                  </el-checkbox-group>
+                  <div style="margin-top: 20%">
+                    <el-button type="primary" @click="submitMFFun">确 定</el-button>
+                    <el-button @click="cancel">取 消</el-button>
+                  </div>
+                </el-form>
+              </el-tab-pane>
+              <el-tab-pane label="测点" name="cd">
+                <MeasuringPointForm ref="measuringPointForm" :sid="measuringPoint.id" :mf="cdForm.mf" v-if="isShowCD"
+                                    @ok="measuringPointForOkFun"></MeasuringPointForm>
+              </el-tab-pane>
+            </el-tabs>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </el-dialog>
 
@@ -460,7 +499,9 @@ export default {
         title: '',
         id: '',
       },
-
+      activeTab :'baseInfo',
+      activeCDTab :'jcys',
+      isShowCD : false,
     };
   },
   created() {
@@ -524,17 +565,26 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加结构物";
+      this.activeTab = "baseInfo";
+      this.activeCDTab = "jcys";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       this.isUpdate = true;
-      this.baseInfo = false;
-      this.sbInfo = false;
-      this.cdInfo = false;
       this.rowDOM = row;
       this.open = true;
       this.title = "修改结构物";
+      const id = this.rowDOM.id;
+      this.baseInfo= true;
+      this.sbInfo= true;
+      this.cdInfo= true;
+      this.activeTab = "baseInfo";
+      this.activeCDTab = "jcys";
+      getStructure(id).then(response => {
+        this.form = response.data;
+      });
+
     },
     /** 提交按钮 */
     submitForm() {
@@ -551,6 +601,8 @@ export default {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.cdInfo = true;
+              this.sbInfo = true;
             });
           }
         }
@@ -590,23 +642,19 @@ export default {
       });
     },
     //Tab切换
-    switchTabFun(param) {
-      this.baseInfo = false;
-      this.sbInfo = false;
-      this.cdInfo = false;
+    switchTabFun(tab,event) {
       const id = this.rowDOM.id;
-      if (param == 'baseInfo') {
+      if (tab.name == 'baseInfo') {
         this.baseInfo = true;
         getStructure(id).then(response => {
           this.form = response.data;
         });
-      } else if (param == 'sbInfo') {
+      } else if(tab.name == 'sbInfo') {
         this.sbInfo = true;
         this.getEquipmentListByStructureIdFun(id);
-      } else if (param == 'cdInfo') {
+      }else if(tab.name == 'cdInfo') {
         this.cdInfo = true;
         this.getMFInfoFun();
-        this.measuringPoint.id = this.rowDOM.id;
       }
     },
     //配置采集策略
@@ -680,6 +728,7 @@ export default {
       this.cdForm.id = this.rowDOM.id;
       insertMFFun(this.cdForm).then(response => {
         this.$modal.msgSuccess("保存成功");
+
       });
     },
     getMFInfoFun() {
@@ -688,7 +737,17 @@ export default {
       });
     },
     measuringPointForOkFun() {
-      this.cdInfo = false;
+
+
+    },
+    switchCDTabFun(tab,event){
+      if (tab.name == 'jcys') {
+
+      } else if(tab.name == 'cd') {
+        this.isShowCD = true;
+        this.measuringPoint.id = this.rowDOM.id;
+        this.$refs.measuringPointForm.getMeasuringPointTreeFun();
+      }
     },
   }
 };

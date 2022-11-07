@@ -44,19 +44,19 @@ public class MeasuringPointServiceImpl implements IMeasuringPointService {
     @Transactional(rollbackFor = Exception.class)
     public MeasuringPoint selectMeasuringPointById(Long id) {
         MeasuringPoint measuringPoint = measuringPointMapper.selectMeasuringPointById(id);
-        if(measuringPoint!=null){
+        if (measuringPoint != null) {
             String mfId = this.getMfId(measuringPoint);
             measuringPoint.setMfId(mfId);
         }
         return measuringPoint;
     }
 
-    private String getMfId(MeasuringPoint measuringPoint){
-        if(StringUtils.isEmpty(measuringPoint.getMfId())){
+    private String getMfId(MeasuringPoint measuringPoint) {
+        if (StringUtils.isEmpty(measuringPoint.getMfId())) {
             MeasuringPoint point = this.measuringPointMapper.selectMeasuringPointById(measuringPoint.getParentId());
             return this.getMfId(point);
-        }else{
-            return  measuringPoint.getMfId();
+        } else {
+            return measuringPoint.getMfId();
         }
     }
 
@@ -73,32 +73,45 @@ public class MeasuringPointServiceImpl implements IMeasuringPointService {
             hmDictValueToLabel.put(sysDictData.getDictValue(), sysDictData.getDictLabel());
         }
         ArrayList<TreeSelect> alTreeSelect = new ArrayList<>();
-        if (measuringPointList.size() <= 0) {
+        StructureMonitoringFactors smfParam = new StructureMonitoringFactors();
+        smfParam.setStructureId(measuringPoint.getStructureId());
+        //选择的监测因素集合
+        List<StructureMonitoringFactors> structureMonitoringFactorsList = this.structureMonitoringFactorsMapper.selectStructureMonitoringFactorsList(smfParam);
+        List<MeasuringPoint> lev1List = measuringPointList.stream().filter(a -> a.getLev() == 1).collect(Collectors.toList());
+        List<MeasuringPoint> finalLev1List = lev1List;
+        //新增的数据集合  parallel 相同的
+        List<StructureMonitoringFactors> addSMFList = structureMonitoringFactorsList.stream().parallel().filter(f -> finalLev1List.stream().noneMatch(g -> f.getMfId().equals(g.getMfId()))).collect(Collectors.toList());
+        // 删除的数据集合
+        List<MeasuringPoint> deleteSMFList = finalLev1List.stream().distinct().filter(d -> structureMonitoringFactorsList.stream().noneMatch(e -> d.getMfId().equals(e.getMfId()))).collect(Collectors.toList());
+        if (addSMFList.size() > 0) {
             //根据结构物获取指定的监测因素信息
-            StructureMonitoringFactors smfParam = new StructureMonitoringFactors();
-            smfParam.setStructureId(measuringPoint.getStructureId());
-            List<StructureMonitoringFactors> structureMonitoringFactorsList = this.structureMonitoringFactorsMapper.selectStructureMonitoringFactorsList(smfParam);
-            for (StructureMonitoringFactors smf : structureMonitoringFactorsList) {
-                MeasuringPoint mpSave = new MeasuringPoint();
-                mpSave.setName(hmDictValueToLabel.get(smf.getMfId()));
-                mpSave.setStructureId(measuringPoint.getStructureId());
-                mpSave.setLev(1L);
-                mpSave.setMfId(smf.getMfId());
-                mpSave.setCreateBy(SecurityUtils.getLoginUser().getUsername());
-                mpSave.setCreateTime(DateUtils.getNowDate());
-                mpSave.setMfId(smf.getMfId()); //监测因素ID
-                this.measuringPointMapper.insertMeasuringPoint(mpSave);
-                measuringPointList.add(mpSave);
+            if (measuringPoint.getStructureId() != null) {
+                for (StructureMonitoringFactors smf : addSMFList) {
+                    MeasuringPoint mpSave = new MeasuringPoint();
+                    mpSave.setName(hmDictValueToLabel.get(smf.getMfId()));
+                    mpSave.setStructureId(measuringPoint.getStructureId());
+                    mpSave.setLev(1L);
+                    mpSave.setCreateBy(SecurityUtils.getLoginUser().getUsername());
+                    mpSave.setCreateTime(DateUtils.getNowDate());
+                    mpSave.setMfId(smf.getMfId()); //监测因素ID
+                    this.measuringPointMapper.insertMeasuringPoint(mpSave);
+                    measuringPointList.add(mpSave);
+                }
             }
         }
-        //1.不用递归,就三级
-        List<MeasuringPoint> lev1List = measuringPointList.stream().filter(a -> a.getLev() == 1).collect(Collectors.toList());
+        if (deleteSMFList != null && deleteSMFList.size() > 0) {
+            for (MeasuringPoint mp : deleteSMFList) {
+                this.measuringPointMapper.deleteMeasuringPointById(mp.getId());
+            }
+        }
+        measuringPointList = measuringPointList.stream().parallel().filter(a -> deleteSMFList.stream().noneMatch(b -> a.getMfId().equals(b.getMfId()))).collect(Collectors.toList());
+        lev1List = measuringPointList.stream().filter(a -> a.getLev() == 1).collect(Collectors.toList());
         for (MeasuringPoint mpLev1 : lev1List) {
             TreeSelect treeLev1 = new TreeSelect();
             treeLev1.setId(mpLev1.getId());
             treeLev1.setLabel(mpLev1.getName());
             //二级
-            List<MeasuringPoint> lev2List = measuringPointList.stream().filter(a -> (a.getLev() == 2 && a.getParentId() == mpLev1.getId())).collect(Collectors.toList());
+            List<MeasuringPoint> lev2List = measuringPointList.stream().filter(b -> (b.getLev() == 2 && b.getParentId().equals(mpLev1.getId()))).collect(Collectors.toList());
             ArrayList<TreeSelect> returnLev2List = new ArrayList<>();
             for (MeasuringPoint mpLev2 : lev2List) {
                 TreeSelect treeSelectLev2 = new TreeSelect();
@@ -106,7 +119,7 @@ public class MeasuringPointServiceImpl implements IMeasuringPointService {
                 treeSelectLev2.setLabel(mpLev2.getName());
                 returnLev2List.add(treeSelectLev2);
                 //三级
-                List<MeasuringPoint> lev3List = measuringPointList.stream().filter(a -> (a.getLev() == 3 && a.getParentId() == mpLev2.getId())).collect(Collectors.toList());
+                List<MeasuringPoint> lev3List = measuringPointList.stream().filter(c -> (c.getLev() == 3 && c.getParentId().equals(mpLev2.getId()))).collect(Collectors.toList());
                 ArrayList<TreeSelect> returnLev3List = new ArrayList<>();
                 for (MeasuringPoint mpLev3 : lev3List) {
                     TreeSelect treeSelectLev3 = new TreeSelect();
@@ -182,7 +195,7 @@ public class MeasuringPointServiceImpl implements IMeasuringPointService {
         MeasuringPoint mpParam = new MeasuringPoint();
         mpParam.setParentId(point.getId());
         List<MeasuringPoint> measuringPointList = this.measuringPointMapper.selectMeasuringPointList(mpParam);
-        for (MeasuringPoint mp:measuringPointList) {
+        for (MeasuringPoint mp : measuringPointList) {
             this.measuringPointMapper.deleteMeasuringPointById(mp.getId());
         }
         return this.measuringPointMapper.deleteMeasuringPointById(point.getId());
