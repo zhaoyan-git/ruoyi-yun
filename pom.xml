@@ -204,6 +204,7 @@
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>cloud-monitoring-platform</module>
+        <module>netty</module>
     </modules>
     <packaging>pom</packaging>
 
