@@ -1,3 +1,5 @@
+package com.ruoyi.cmp.netty;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;

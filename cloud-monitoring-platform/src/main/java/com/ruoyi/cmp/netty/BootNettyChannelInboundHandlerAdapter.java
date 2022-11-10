@@ -1,4 +1,5 @@
-import com.ruoyi.common.core.redis.RedisCache;
+package com.ruoyi.cmp.netty;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -8,9 +9,6 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter {
     // 用于记录和管理所有客户端的channel

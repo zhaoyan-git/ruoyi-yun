@@ -1,3 +1,5 @@
+package com.ruoyi.cmp.netty;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
