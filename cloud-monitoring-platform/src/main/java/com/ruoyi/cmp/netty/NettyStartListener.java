@@ -13,10 +13,11 @@ import javax.annotation.Resource;
 @Component
 public class NettyStartListener implements ApplicationRunner {
     @Resource
-    private SocketServer socketServer;
+    private BootNettyServer socketServer;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        this.socketServer.start();
+//        this.socketServer.setPort(8088);
+        this.socketServer.bind(8088);
     }
 }
