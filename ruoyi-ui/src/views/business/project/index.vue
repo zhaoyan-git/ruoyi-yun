@@ -56,7 +56,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['business:project:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -67,7 +68,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['business:project:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -78,35 +80,26 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['business:project:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['business:project:export']"
-        >导出</el-button>
+        >删除
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="projectList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="项目名称" align="center" prop="name" />
-      <el-table-column label="所属企业" align="center" prop="deptName" />
-      <el-table-column label="监控目的" align="center" prop="aim" />
-<!--      <el-table-column label="项目图片" align="center" prop="photoFile" >-->
-<!--        <template slot-scope="scope">-->
-<!--          <image-upload v-model="scope.row.photoFile" :value="scope.row.photoFile"/>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <el-table-column label="备注" align="center" prop="details" />
-      <el-table-column label="项目位置纬度" align="center" prop="positionLat" />
-      <el-table-column label="项目位置经度" align="center" prop="positionLng" />
-      <el-table-column label="警报标志" align="center" prop="alarmFlag" >
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="项目名称" align="center" prop="name"/>
+      <el-table-column label="所属企业" align="center" prop="deptName"/>
+      <el-table-column label="监控目的" align="center" prop="aim"/>
+      <!--      <el-table-column label="项目图片" align="center" prop="photoFile" >-->
+      <!--        <template slot-scope="scope">-->
+      <!--          <image-upload v-model="scope.row.photoFile" :value="scope.row.photoFile"/>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
+      <el-table-column label="备注" align="center" prop="details"/>
+      <el-table-column label="项目位置纬度" align="center" prop="positionLat"/>
+      <el-table-column label="项目位置经度" align="center" prop="positionLng"/>
+      <el-table-column label="警报标志" align="center" prop="alarmFlag">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.alarm_flag" :value="scope.row.alarmFlag"/>
         </template>
@@ -119,14 +112,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:project:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:project:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -142,45 +137,71 @@
     <!-- 添加或修改项目对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="项目名称" prop="name">
-          <el-input v-model="form.name"  placeholder="请输入项目名称" />
-        </el-form-item>
-        <el-form-item label="所属企业" prop="businessId">
-          <treeselect
-            v-model="form.businessId"
-            :options="deptOptions"
-            :show-count="true"
-            placeholder="选择所属企业"
-          />
-        </el-form-item>
-        <el-form-item label="监控目的" prop="aim">
-          <el-input v-model="form.aim" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="项目图片">
-          <image-upload v-model="form.photoFile" :value="fileList" @ok="fileCallbackFun()"/>
-        </el-form-item>
-        <el-form-item label="项目位置纬度" prop="positionLat">
-          <el-input v-model="form.positionLat" placeholder="请输入项目位置纬度" />
-        </el-form-item>
-        <el-form-item label="项目位置经度" prop="positionLng">
-          <el-input v-model="form.positionLng" placeholder="请输入项目位置经度" />
-        </el-form-item>
-        <el-form-item label="警报标志" prop="alarmFlag">
-          <el-select
-            v-model="form.alarmFlag"
-            clearable
-          >
-            <el-option
-              v-for="dict in dict.type.alarm_flag"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注" prop="details">
-          <el-input v-model="form.details" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="项目名称" prop="name">
+              <el-input  maxlength="50" show-word-limit v-model="form.name" placeholder="请输入项目名称"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="所属企业" prop="businessId">
+              <treeselect
+                v-model="form.businessId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="选择所属企业"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="监控目的" prop="aim">
+              <el-input maxlength="150" show-word-limit v-model="form.aim" type="textarea" placeholder="请输入内容"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="警报标志" prop="alarmFlag">
+              <el-select
+                v-model="form.alarmFlag"
+                clearable
+              >
+                <el-option
+                  v-for="dict in dict.type.alarm_flag"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="项目位置纬度" prop="positionLat">
+              <el-input type="number" v-model="form.positionLat" placeholder="请输入项目位置纬度"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="项目位置经度" prop="positionLng">
+              <el-input type="number" v-model="form.positionLng" placeholder="请输入项目位置经度"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="项目图片">
+              <image-upload v-model="form.photoFile" :value="fileList" @ok="fileCallbackFun()"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="details">
+              <el-input maxlength="200" show-word-limit v-model="form.details" type="textarea" placeholder="请输入内容"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -191,15 +212,15 @@
 </template>
 
 <script>
-import { listProject, getProject, delProject, addProject, updateProject } from "@/api/business/project";
-import { getTreeselectList } from "@/api/system/dept";
+import {listProject, getProject, delProject, addProject, updateProject} from "@/api/business/project";
+import {getTreeselectList} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Project",
-  components:{Treeselect},
-  dicts :['alarm_flag'],
+  components: {Treeselect},
+  dicts: ['alarm_flag'],
   data() {
     return {
       // 遮罩层
@@ -236,11 +257,10 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       //部门树选项
-      deptOptions : undefined,
-      fileList:[],
+      deptOptions: undefined,
+      fileList: [],
     };
   },
   created() {
@@ -295,7 +315,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -337,12 +357,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除项目编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除项目编号为"' + ids + '"的数据项？').then(function () {
         return delProject(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -350,16 +371,16 @@ export default {
         ...this.queryParams
       }, `project_${new Date().getTime()}.xlsx`)
     },
-    getTreeselect(){
+    getTreeselect() {
       var queryForm = {};
       queryForm.type = '1';
-      getTreeselectList(queryForm).then(response =>{
+      getTreeselectList(queryForm).then(response => {
         this.deptOptions = response.data;
       });
     },
-    fileCallbackFun(param){
+    fileCallbackFun(param) {
       this.fileList = param;
-      console.log("回调参数"+param);
+      console.log("回调参数" + param);
     },
   }
 };

@@ -126,10 +126,10 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备名称" prop="name">
-          <el-input v-model="form.name"  placeholder="请输入设备名称" />
+          <el-input maxlength="100" show-word-limit v-model="form.name"  placeholder="请输入设备名称" />
         </el-form-item>
         <el-form-item label="型号" prop="model">
-          <el-input v-model="form.model" placeholder="请输入型号" />
+          <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号" />
         </el-form-item>
         <el-form-item label="厂商" prop="manufacturer">
           <treeselect
@@ -140,13 +140,13 @@
           />
         </el-form-item>
         <el-form-item label="设备ID号" prop="equipmentId">
-          <el-input v-model="form.equipmentId" placeholder="请输入设备ID号" />
+          <el-input maxlength="100" show-word-limit v-model="form.equipmentId" placeholder="请输入设备ID号" />
         </el-form-item>
         <el-form-item label="SIM卡号" prop="sim">
-          <el-input v-model="form.sim" placeholder="请输入SIM卡号" />
+          <el-input maxlength="100" show-word-limit v-model="form.sim" placeholder="请输入SIM卡号" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

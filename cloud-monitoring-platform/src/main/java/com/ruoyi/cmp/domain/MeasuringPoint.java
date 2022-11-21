@@ -35,7 +35,17 @@ public class MeasuringPoint extends BaseEntity
 
     /** 设备 */
     @Excel(name = "设备")
-    private Long equipmentId;
+    private String equipmentId;
+
+    public Object getEquipmentIdArr() {
+        return equipmentIdArr;
+    }
+
+    public void setEquipmentIdArr(Object equipmentIdArr) {
+        this.equipmentIdArr = equipmentIdArr;
+    }
+
+    private Object equipmentIdArr;
 
     public String getEquipmentName() {
         return equipmentName;
@@ -122,7 +132,16 @@ public class MeasuringPoint extends BaseEntity
     {
         return name;
     }
-    public void setMfId(String mfId) 
+
+    public String getEquipmentId() {
+        return equipmentId;
+    }
+
+    public void setEquipmentId(String equipmentId) {
+        this.equipmentId = equipmentId;
+    }
+
+    public void setMfId(String mfId)
     {
         this.mfId = mfId;
     }
@@ -140,15 +159,7 @@ public class MeasuringPoint extends BaseEntity
     {
         return dataSourceTypeId;
     }
-    public void setEquipmentId(Long equipmentId) 
-    {
-        this.equipmentId = equipmentId;
-    }
 
-    public Long getEquipmentId() 
-    {
-        return equipmentId;
-    }
     public void setGroupName(String groupName) 
     {
         this.groupName = groupName;

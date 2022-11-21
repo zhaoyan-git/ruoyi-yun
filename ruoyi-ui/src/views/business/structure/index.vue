@@ -111,36 +111,36 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="名称" prop="name" class="baseFormClass">
-                      <el-input v-model="form.name" placeholder="请输入结构物名称"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.name" placeholder="请输入结构物名称"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="地址" prop="location" class="baseFormClass">
-                      <el-input v-model="form.location" placeholder="请输入地址"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.location" placeholder="请输入地址"/>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="精度" prop="positionLat" class="baseFormClass">
-                      <el-input v-model="form.positionLat" placeholder="请输入精度"/>
+                      <el-input type="number" v-model="form.positionLat" placeholder="请输入精度"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="纬度" prop="positionLng" class="baseFormClass">
-                      <el-input v-model="form.positionLng" placeholder="请输入纬度"/>
+                      <el-input type="number" v-model="form.positionLng" placeholder="请输入纬度"/>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="监测目的" prop="monitoringPurpose" class="baseFormClass">
-                      <el-input v-model="form.monitoringPurpose" type="textarea" placeholder="请输入监测目的"/>
+                      <el-input maxlength="150" show-word-limit v-model="form.monitoringPurpose" type="textarea" placeholder="请输入监测目的"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="监测依据" prop="monitoringBasis" class="baseFormClass">
-                      <el-input v-model="form.monitoringBasis" placeholder="请输入监测依据"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.monitoringBasis" placeholder="请输入监测依据"/>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -156,42 +156,41 @@
                 <el-row>
                   <el-col :span="24">
                     <el-form-item label="描述" prop="dedc" class="baseFormClass">
-                      <el-input v-model="form.dedc" type="textarea" placeholder="请输入描述"/>
+                      <el-input maxlength="200" show-word-limit v-model="form.dedc" type="textarea" placeholder="请输入描述"/>
                     </el-form-item>
                   </el-col>
-
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="施工单位" prop="constructionUnit" class="baseFormClass">
-                      <el-input v-model="form.constructionUnit" placeholder="请输入施工单位"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.constructionUnit" placeholder="请输入施工单位"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="联系人" prop="constructionPserson" class="baseFormClass">
-                      <el-input v-model="form.constructionPserson" placeholder="请输入联系人"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.constructionPserson" placeholder="请输入联系人"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="联系电话" prop="constructionPhone" class="baseFormClass">
-                      <el-input v-model="form.constructionPhone" placeholder="请输入联系电话"/>
+                      <el-input type="number" v-model="form.constructionPhone" placeholder="请输入联系电话"/>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="监理单位" prop="manageUnit" class="baseFormClass">
-                      <el-input v-model="form.manageUnit" placeholder="请输入监理单位"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.manageUnit" placeholder="请输入监理单位"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="联系人" prop="managePerson" class="baseFormClass">
-                      <el-input v-model="form.managePerson" placeholder="请输入联系人"/>
+                      <el-input maxlength="50" show-word-limit v-model="form.managePerson" placeholder="请输入联系人"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="联系电话" prop="managePhone" class="baseFormClass">
-                      <el-input v-model="form.managePhone" placeholder="请输入联系电话"/>
+                      <el-input type="number" v-model="form.managePhone" placeholder="请输入联系电话"/>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -369,7 +368,7 @@
       <SensorForm ref="sensorForm" :sid="sensor.sid" :equipmentId="sensor.equipmentId" @ok="sensorForOkFun"></SensorForm>
     </el-dialog>
     <!--DTU-->
-    <el-dialog :title="dtu.title" :visible.sync="dtu.open" width="700px" append-to-body>
+    <el-dialog :title="dtu.title" :visible.sync="dtu.open"   append-to-body>
       <DtuForm ref="dtuForm" :sid="dtu.sid"  :equipmentId="dtu.equipmentId" @ok="dtuForOkFun"></DtuForm>
     </el-dialog>
   </div>
@@ -741,12 +740,12 @@ export default {
 
     },
     switchCDTabFun(tab,event){
-      if (tab.name == 'jcys') {
-
-      } else if(tab.name == 'cd') {
+      if(tab.name == 'cd') {
         this.isShowCD = true;
         this.measuringPoint.id = this.rowDOM.id;
-        this.$refs.measuringPointForm.getMeasuringPointTreeFun();
+        if(this.$refs.measuringPointForm){
+          this.$refs.measuringPointForm.getMeasuringPointTreeFun();
+        }
       }
     },
   }

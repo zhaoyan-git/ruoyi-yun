@@ -12,10 +12,10 @@
         />
       </el-form-item>
       <el-form-item label="产品" class="formColumnClassForSen" prop="product">
-        <el-input v-model="form.product" placeholder="请输入产品"/>
+        <el-input maxlength="100" show-word-limit v-model="form.product" placeholder="请输入产品"/>
       </el-form-item>
       <el-form-item label="型号" class="formColumnClassForSen" prop="model">
-        <el-input v-model="form.model" placeholder="请输入型号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号"/>
       </el-form-item>
       <el-form-item label="批量添加" class="formColumnClassForSen" prop="batchadd">
         <el-switch
@@ -33,22 +33,22 @@
 
       </el-form-item>
       <el-form-item label="模块号" class="formColumnClassForSen" prop="moduleNo">
-        <el-input v-model="form.moduleNo" placeholder="请输入模块号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.moduleNo" placeholder="请输入模块号"/>
       </el-form-item>
       <el-form-item label="通道号" class="formColumnClassForSen" prop="channelNo">
-        <el-input v-model="form.channelNo" placeholder="请输入通道号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.channelNo" placeholder="请输入通道号"/>
       </el-form-item>
       <el-form-item label="编号" class="formColumnClassForSen" prop="no">
-        <el-input v-model="form.no" placeholder="请输入编号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.no" placeholder="请输入编号"/>
       </el-form-item>
       <el-form-item label="公式" class="formColumnClassForSen" prop="formula">
-        <el-input v-model="form.formula" placeholder="请输入公式"/>
+        <el-input maxlength="100" show-word-limit v-model="form.formula" placeholder="请输入公式"/>
       </el-form-item>
       <el-form-item label="表达式" class="formColumnClassForSen" prop="expression">
-        <el-input v-model="form.expression" placeholder="请输入表达式"/>
+        <el-input maxlength="100" show-word-limit v-model="form.expression" placeholder="请输入表达式"/>
       </el-form-item>
       <el-form-item label="备注" class="formColumnClassForSen" prop="remark">
-        <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+        <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

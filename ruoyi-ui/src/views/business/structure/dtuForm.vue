@@ -1,62 +1,104 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-      <el-form-item label="厂商"  class="formColumnClassForDTU" prop="manufacturer">
-        <treeselect
-          v-model="form.manufacturer"
-          style="width: 250px;"
-          :options="deptOptions"
-          placeholder="请选择企业"
-          :show-count="true"
-        />
-      </el-form-item>
-      <el-form-item label="产品" class="formColumnClassForDTU" prop="product">
-        <el-select v-model="form.product" placeholder="请输入产品" clearable>
-          <el-option
-            v-for="dict in dict.type.product_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="型号" class="formColumnClassForDTU" prop="model">
-        <el-input v-model="form.model" placeholder="请输入型号"/>
-      </el-form-item>
-      <el-form-item label="名称" class="formColumnClassForDTU" prop="name">
-        <el-input v-model="form.name" type="textarea" placeholder="请输入内容"/>
-      </el-form-item>
+    <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="厂商" class="formColumnClassForDTU" prop="manufacturer">
+            <treeselect
+              v-model="form.manufacturer"
+              style="width: 250px;"
+              :options="deptOptions"
+              placeholder="请选择企业"
+              :show-count="true"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="产品" class="formColumnClassForDTU" prop="product">
+            <el-select v-model="form.product" placeholder="请输入产品" clearable>
+              <el-option
+                v-for="dict in dict.type.product_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="型号" class="formColumnClassForDTU" prop="model">
+            <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="名称" class="formColumnClassForDTU" prop="name">
+            <el-input maxlength="100" show-word-limit v-model="form.name" type="textarea" placeholder="请输入内容"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="SIM卡号" class="formColumnClassForDTU" prop="sim">
+            <el-input maxlength="100" show-word-limit v-model="form.sim" placeholder="请输入SIM卡号"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="接口ID" class="formColumnClassForDTU" prop="dtuNo">
+            <el-input maxlength="100" show-word-limit v-model="form.dtuNo" placeholder="请输入接口ID"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="CRC校验" class="formColumnClassForDTU" prop="crc">
+            <el-switch
+              v-model="form.crc"
+            >
+            </el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="单包大小(Byte)" class="formColumnClassForDTU" prop="pageSize">
+            <el-input typr="number" v-model="form.pageSize" placeholder="请输入单包大小(Byte)"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="SIM卡号" class="formColumnClassForDTU" prop="sim">
-        <el-input v-model="form.sim" placeholder="请输入SIM卡号"/>
-      </el-form-item>
-      <el-form-item label="接口ID" class="formColumnClassForDTU" prop="dtuNo">
-        <el-input v-model="form.dtuNo" placeholder="请输入接口ID"/>
-      </el-form-item>
-      <el-form-item label="CRC校验" class="formColumnClassForDTU" prop="crc">
-        <el-switch
-          v-model="form.crc"
-        >
-        </el-switch>
-      </el-form-item>
-      <el-form-item label="单包大小(Byte)" class="formColumnClassForDTU" prop="pageSize">
-        <el-input v-model="form.pageSize" placeholder="请输入单包大小(Byte)"/>
-      </el-form-item>
-      <el-form-item label="发送延时(ms)" class="formColumnClassForDTU" prop="transmissionDelay">
-        <el-input v-model="form.transmissionDelay" placeholder="请输入发送延时(ms)"/>
-      </el-form-item>
-      <el-form-item label="同步接收包组时间" class="formColumnClassForDTU" prop="receivedPacket">
-        <el-input v-model="form.receivedPacket" placeholder="请输入同步接收包组时间"/>
-      </el-form-item>
-      <el-form-item label="码流日志" class="formColumnClassForDTU" prop="streamLog">
-        <el-switch
-          v-model="form.streamLog"
-        >
-        </el-switch>
-      </el-form-item>
-      <el-form-item label="备注" class="formColumnClassForDTU" prop="remark">
-        <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="发送延时(ms)" class="formColumnClassForDTU" prop="transmissionDelay">
+            <el-input type="number" v-model="form.transmissionDelay" placeholder="请输入发送延时(ms)"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="同步接收包组时间" class="formColumnClassForDTU" prop="receivedPacket">
+            <el-input type="number" v-model="form.receivedPacket" placeholder="请输入同步接收包组时间"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="码流日志" class="formColumnClassForDTU" prop="streamLog">
+            <el-switch
+              v-model="form.streamLog"
+            >
+            </el-switch>
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="备注" class="formColumnClassForDTU" prop="remark">
+            <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+
+
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -75,8 +117,8 @@ import {listSensor} from "@/api/business/sensor";
 export default {
   name: "Dtu",
   components: {Treeselect},
-  dicts: ['alarm_flag', 'structure_type', 'monitoring_factors','add_type','product_type'],
-  props: ['sid','equipmentId'],
+  dicts: ['alarm_flag', 'structure_type', 'monitoring_factors', 'add_type', 'product_type'],
+  props: ['sid', 'equipmentId'],
   data() {
     return {
       // 遮罩层
@@ -188,7 +230,7 @@ export default {
           }
         }
       });
-      this.$emit("ok",'');
+      this.$emit("ok", '');
     },
     getTreeselect() {
       var queryForm = {};
@@ -210,5 +252,7 @@ export default {
 };
 </script>
 <style>
-  .formColumnClassForDTU{ width: 60%}
+.formColumnClassForDTU {
+  width: 100%
+}
 </style>
