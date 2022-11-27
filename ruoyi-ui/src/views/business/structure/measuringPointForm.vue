@@ -51,11 +51,12 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="设备" class="formColumnClassForMPF" prop="equipmentId">
+          <el-form-item label="设备" class="formColumnClassForMPF" prop="equipmentId" v-if="isSelect">
             <el-select
-              v-model="form.equipmentId"
+              v-model="equipmentIdArr"
               clearable
               placeholder="请选择设备"
+              multiple
             >
               <el-option
                 v-for="dict in equipmentList"
@@ -131,6 +132,7 @@ export default {
         no: null,
         csId: null,
       },
+      equipmentIdArr: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -156,6 +158,7 @@ export default {
       newData: [],
       isShowLev3: false,
       equipmentList: [],
+      isSelect: false,
     };
   },
   //一般在初始化页面完成后，再对dom节点进行相关操作
@@ -214,6 +217,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.structureId = this.sid;
+          this.form.equipmentIdArr = this.equipmentIdArr;
           if (this.form.id != null) {
             updatePoint(this.form).then(response => {
               this.$modal.msgSuccess("保存成功");
@@ -236,7 +240,6 @@ export default {
     /**获取测点树信息*/
     getMeasuringPointTreeFun() {
       this.queryParams.structureId = this.sid;
-
       getMeasuringPointTreeFun(this.queryParams).then(response => {
         this.newData = response.data.treeSelect;
       });
@@ -274,8 +277,8 @@ export default {
       this.form.nodeInfo = json;
       this.form.structureId = this.sid;
       saveNodeInfoFun(this.form).then(response => {
-          this.isShowLev3 = false;
-          this.getMeasuringPointTreeFun();
+        this.isShowLev3 = false;
+        this.getMeasuringPointTreeFun();
       });
     },
     /**节点单击事件*/
@@ -295,6 +298,7 @@ export default {
         getPoint(node.data.id).then(response => {
           if (response.data)
             this.form = response.data;
+          this.equipmentIdArr = JSON.parse(response.data.equipmentId);
         });
       }
     },
@@ -310,6 +314,7 @@ export default {
               value: res.rows[index].id,
             })
           }
+          this.isSelect = true;
         }
       });
     },

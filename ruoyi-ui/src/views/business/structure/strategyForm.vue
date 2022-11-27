@@ -2,13 +2,13 @@
   <div class="app-container">
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="采集策略名称" prop="name" class="formColumnClass">
-          <el-input v-model="form.name" placeholder="请输入内容"/>
+          <el-input maxlength="50" show-word-limit v-model="form.name" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="采集时间(分钟)" prop="svalue" class="formColumnClass">
           <el-input v-model="form.svalue" placeholder="请输入采集时间(分钟)" oninput="value=value.replace(/^\.+|[^\d.]/g,'')" />
         </el-form-item>
         <el-form-item label="备注" prop="remark" class="formColumnClass">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+          <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

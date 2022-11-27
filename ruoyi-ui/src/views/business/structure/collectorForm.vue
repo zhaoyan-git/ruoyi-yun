@@ -11,16 +11,16 @@
         />
       </el-form-item>
       <el-form-item label="产品" prop="product" formColumnClassForColl>
-        <el-input v-model="form.product" placeholder="请输入产品"/>
+        <el-input maxlength="200" show-word-limit v-model="form.product" placeholder="请输入产品"/>
       </el-form-item>
       <el-form-item label="型号" prop="model" formColumnClassForColl>
-        <el-input v-model="form.model" placeholder="请输入型号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号"/>
       </el-form-item>
       <el-form-item label="模块号" prop="moduleNo" formColumnClassForColl>
-        <el-input v-model="form.moduleNo" placeholder="请输入模块号"/>
+        <el-input maxlength="100" show-word-limit v-model="form.moduleNo" placeholder="请输入模块号"/>
       </el-form-item>
       <el-form-item label="编号" prop="no" formColumnClassForColl>
-        <el-input v-model="form.no" placeholder="请输入编号"/>
+        <el-input  maxlength="100" show-word-limit v-model="form.no" placeholder="请输入编号"/>
       </el-form-item>
       <el-form-item label="采集策略" prop="csId" formColumnClassForColl>
         <el-select
@@ -37,7 +37,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="备注" prop="remark" formColumnClassForColl>
-        <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+        <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

@@ -192,9 +192,15 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
-1
+
 
     <modules>
         <module>ruoyi-admin</module>

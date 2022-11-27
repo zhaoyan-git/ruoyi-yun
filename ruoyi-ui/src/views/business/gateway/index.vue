@@ -67,8 +67,8 @@
         </template>
       </el-table-column>
       <el-table-column label="ip" align="center" prop="ip" />
-      <el-table-column label="设备在地图上的纬度" align="center" prop="positionLat" />
-      <el-table-column label="设备在地图上的经度" align="center" prop="positionLng" />
+      <el-table-column label="设备在地图上的纬度" align="center" prop="positionLat" width="150" />
+      <el-table-column label="设备在地图上的经度" align="center" prop="positionLng" width="150" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,7 +114,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备名称" prop="name" class="formColumnForGateWay">
-          <el-input v-model="form.name" placeholder="请输入设备名称" />
+          <el-input maxlength="100" show-word-limit v-model="form.name" placeholder="请输入设备名称" />
         </el-form-item>
         <el-form-item label="厂商" prop="manufacturer" class="formColumnForGateWay">
           <treeselect
@@ -126,16 +126,16 @@
           />
         </el-form-item>
         <el-form-item label="型号" prop="modelNumber" class="formColumnForGateWay">
-          <el-input v-model="form.modelNumber"  placeholder="请输入型号" />
+          <el-input maxlength="200" show-word-limit v-model="form.modelNumber"  placeholder="请输入型号" />
         </el-form-item>
         <el-form-item label="设备说明" prop="detail" class="formColumnForGateWay">
-          <el-input v-model="form.detail"  placeholder="请输入设备说明" />
+          <el-input maxlength="200" show-word-limit v-model="form.detail"  placeholder="请输入设备说明" />
         </el-form-item>
         <el-form-item label="sim卡号" prop="simNumber" class="formColumnForGateWay">
-          <el-input v-model="form.simNumber"  placeholder="请输入sim卡号" />
+          <el-input maxlength="200" show-word-limit v-model="form.simNumber"  placeholder="请输入sim卡号" />
         </el-form-item>
         <el-form-item label="DTU ID" prop="dtuId" class="formColumnForGateWay">
-          <el-input v-model="form.dtuId"  placeholder="请输入DTU ID" />
+          <el-input maxlength="200" show-word-limit v-model="form.dtuId"  placeholder="请输入DTU ID" />
         </el-form-item>
         <el-form-item label="是否在线" prop="onlineFlag" class="formColumnForGateWay">
           <el-select v-model="form.onlineFlag" placeholder="请输入是否在线">
@@ -148,13 +148,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="ip" prop="ip" class="formColumnForGateWay">
-          <el-input v-model="form.ip" placeholder="请输入ip" />
+          <el-input maxlength="200" show-word-limit v-model="form.ip" placeholder="请输入ip" />
         </el-form-item>
         <el-form-item label="设备在地图上的纬度" prop="positionLat" class="formColumnForGateWay">
-          <el-input v-model="form.positionLat"  placeholder="请输入设备在地图上的纬度" />
+          <el-input type="number" v-model="form.positionLat"  placeholder="请输入设备在地图上的纬度" />
         </el-form-item>
         <el-form-item label="设备在地图上的经度" prop="positionLng" class="formColumnForGateWay">
-          <el-input v-model="form.positionLng"  placeholder="请输入设备在地图上的经度" />
+          <el-input type="number" v-model="form.positionLng"  placeholder="请输入设备在地图上的经度" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

@@ -209,6 +209,8 @@ public class MeasuringPointServiceImpl implements IMeasuringPointService {
      */
     @Override
     public int updateMeasuringPoint(MeasuringPoint measuringPoint) {
+        ArrayList<Integer> alEquipmentId = (ArrayList<Integer>) measuringPoint.getEquipmentIdArr();
+        measuringPoint.setEquipmentId(alEquipmentId.toString());
         measuringPoint.setUpdateTime(DateUtils.getNowDate());
         return measuringPointMapper.updateMeasuringPoint(measuringPoint);
     }
