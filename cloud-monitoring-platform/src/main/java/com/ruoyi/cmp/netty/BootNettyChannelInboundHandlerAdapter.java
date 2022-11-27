@@ -1,7 +1,13 @@
 package com.ruoyi.cmp.netty;
 
 
+import com.ruoyi.cmp.domain.ConfigureOrder;
+import com.ruoyi.cmp.domain.ConfigureSensor;
+import com.ruoyi.cmp.domain.ConfigureSensorData;
+import com.ruoyi.cmp.domain.DeviceGateway;
+import com.ruoyi.cmp.service.*;
 import com.ruoyi.cmp.utils.HexUtil;
+import com.ruoyi.cmp.utils.SpringContextUtil;
 import com.ruoyi.common.core.redis.RedisCache;
 //import com.ruoyi.wxcxc.domain.*;
 //import com.ruoyi.wxcxc.mapper.WxcxcDeviceSensorMapper;
@@ -16,6 +22,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -26,7 +33,16 @@ import java.util.List;
 public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter {
     // 用于记录和管理所有客户端的channel
     public static ChannelGroup users = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    @Autowired
+    private IDeviceGatewayService deviceGatewayService ;
+    @Autowired
+    private IConfigureSensorService configureSensorService;
+    @Autowired
+    private IConfigureOrderService configureOrderService;
+    @Autowired
+    private IConfigureSensorDataService configureSensorDataService;
 
+//    private IDeviceService deviceService;
     /**
      * 从客户端收到新的数据时，这个方法会在收到消息时被调用
      *
@@ -39,10 +55,12 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         ByteBuf buf = (ByteBuf) msg;
         byte[] msgByte = new byte[buf.readableBytes()];
         buf.readBytes(msgByte);
-
+        System.out.println("收到："+HexUtil.bytes2HexString(msgByte));
+        System.out.println("收到："+HexUtil.byteToHex(msgByte));
         // 获取IP
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
+        System.out.println("clientIp收到："+clientIp);
 
         // DTU 首次登录包
         // 长度21B
@@ -77,42 +95,43 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                 return;
             }
 
-//            IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
-//            WxcxcDeviceGateway wxcxcDeviceGatewayCondition = new WxcxcDeviceGateway();
-//            wxcxcDeviceGatewayCondition.setDtuId(dtuId);
-//            wxcxcDeviceGatewayCondition.setSimNumber(phoneNumber);
-//            List<WxcxcDeviceGateway> wxcxcDeviceGatewayList = wxcxcDeviceGatewayService.selectWxcxcDeviceGatewayList(wxcxcDeviceGatewayCondition);
-//
-//            // 在系统中查询是否有该DTU
-//            if (null != wxcxcDeviceGatewayList) {
-//                WxcxcDeviceGateway wxcxcDeviceGateway = null;
-//
-//                for (WxcxcDeviceGateway item : wxcxcDeviceGatewayList) {
-//                    wxcxcDeviceGateway = item;
-//                }
-//
-//                if (null != wxcxcDeviceGateway) {
-//                    wxcxcDeviceGateway.setIp(clientIp);
-//                    wxcxcDeviceGateway.setOnlineFlag("1");
-//                    wxcxcDeviceGatewayService.updateWxcxcDeviceGateway(wxcxcDeviceGateway);
-//
-//                    return;
-//                } else {
-//                    // 不符合结构
-//                    ctx.close();
-//                    return;
-//                }
-//            } else {
-//                // 不符合结构
-//                ctx.close();
-//                return;
-//            }
+            DeviceGateway deviceGatewayCondition = new DeviceGateway();
+            deviceGatewayCondition.setDtuId(dtuId);
+            deviceGatewayCondition.setSimNumber(phoneNumber);
+            deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+
+            List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+
+            // 在系统中查询是否有该DTU
+            if (null != deviceGatewayList) {
+                DeviceGateway deviceGateway = null;
+
+                for (DeviceGateway item : deviceGatewayList) {
+                    deviceGateway = item;
+                }
+
+                if (null != deviceGateway) {
+                    deviceGateway.setIp(clientIp);
+                    deviceGateway.setOnlineFlag("1");
+                    deviceGatewayService.updateDeviceGateway(deviceGateway);
+
+                    return;
+                } else {
+                    // 不符合结构
+                    ctx.close();
+                    return;
+                }
+            } else {
+                // 不符合结构
+                ctx.close();
+                return;
+            }
 
         }
 
         // DTU 心跳包
         else if (1 == msgByte.length) {
-            if ("fe".equals(HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1)))) {
+//            if ("fe".equals(HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1)))) {
 //                IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
 //                IWxcxcDeviceService wxcxcDeviceService = (IWxcxcDeviceService) SpringContextUtil.getBean(IWxcxcDeviceService.class);
 //                IWxcxcDeviceSensorService wxcxcDeviceSensorService = (IWxcxcDeviceSensorService) SpringContextUtil.getBean(IWxcxcDeviceSensorService.class);
@@ -121,7 +140,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 //                WxcxcDeviceGateway wxcxcDeviceGateway = getDeviceGatewayByIp(clientIp);
 //                wxcxcDeviceGateway.setOnlineFlag("1");
 //                wxcxcDeviceGatewayService.updateWxcxcDeviceGateway(wxcxcDeviceGateway);
-
+//
 //                // 查询该DTU下连接的全部设备
 //                WxcxcDevice wxcxcDeviceCondition = new WxcxcDevice();
 //                wxcxcDeviceCondition.setGatewayId(wxcxcDeviceGateway.getId());
@@ -167,23 +186,76 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 //                        return;
 //                    }
 //                }
-            }
+//            }
         } else {
-//            System.out.println("read:" + HexUtil.byteToHex(msgByte));
-//            // 接收
-//            // 根据IP判断网关
-//
-//            // 在系统中查询是否有该DTU
-//            IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
-//            WxcxcDeviceGateway wxcxcDeviceGatewayCondition = new WxcxcDeviceGateway();
-//            wxcxcDeviceGatewayCondition.setIp(clientIp);
-//            wxcxcDeviceGatewayCondition.setOnlineFlag("1");
-//            List<WxcxcDeviceGateway> wxcxcDeviceGatewayList = wxcxcDeviceGatewayService.selectWxcxcDeviceGatewayList(wxcxcDeviceGatewayCondition);
-//
-//            IWxcxcDeviceService wxcxcDeviceService = (IWxcxcDeviceService) SpringContextUtil.getBean(IWxcxcDeviceService.class);
-//            IWxcxcDeviceSensorService wxcxcDeviceSensorService = (IWxcxcDeviceSensorService) SpringContextUtil.getBean(IWxcxcDeviceSensorService.class);
-//            WxcxcDeviceSensorMapper wxcxcDeviceSensorMapper = (WxcxcDeviceSensorMapper) SpringContextUtil.getBean(WxcxcDeviceSensorMapper.class);
-//            WxcxcProjectDeviceSensorDataMapper wxcxcProjectDeviceSensorDataMapper = (WxcxcProjectDeviceSensorDataMapper) SpringContextUtil.getBean(WxcxcProjectDeviceSensorDataMapper.class);
+            System.out.println("read:" + HexUtil.byteToHex(msgByte));
+            // 接收
+            // 根据IP判断网关
+            // 在系统中查询是否有该DTU
+            DeviceGateway deviceGatewayCondition = new DeviceGateway();
+            //ip
+            deviceGatewayCondition.setIp(clientIp);
+            //在线设备状态
+            deviceGatewayCondition.setOnlineFlag("Y");
+            deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+            List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+
+            if (null != deviceGatewayList && deviceGatewayList.size() > 0) {
+                for (DeviceGateway deviceGateway : deviceGatewayList){
+
+                    String slaveUnitId = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1));
+                    String slaveCode = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 1, 2));
+                    String dataLength = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 2, 3));
+
+                    System.out.println("地址："+slaveUnitId);
+                    System.out.println("类型："+slaveCode);
+                    System.out.println("长度："+dataLength);
+
+                    ConfigureSensorData configureSensorDataCondition  = new ConfigureSensorData();
+
+                    ConfigureSensor configureSensorCondition = new ConfigureSensor();
+                    configureSensorCondition.setBusinessId(deviceGateway.getId());
+                    configureSensorCondition.setNo(slaveUnitId);
+                    configureSensorService = (IConfigureSensorService) SpringContextUtil.getBean(IConfigureSensorService.class);
+
+                    List<ConfigureSensor> configureSensorList = configureSensorService.selectConfigureSensorList(configureSensorCondition);
+                    for(ConfigureSensor configureSensor:configureSensorList){
+                        ConfigureOrder configureOrderCondition = new ConfigureOrder();
+                        configureOrderCondition.setSensorId(configureSensor.getId());
+                        configureOrderCondition.setOrderType(slaveCode);
+                        configureOrderService = (IConfigureOrderService) SpringContextUtil.getBean(IConfigureOrderService.class);
+
+                        List<ConfigureOrder> configureOrderList = configureOrderService.selectConfigureOrderList(configureOrderCondition);
+                        if( null != configureOrderList && configureOrderList.size() > 0){
+                            ConfigureOrder configureOrder = configureOrderList.get(0);
+//                            Integer address = Integer.parseInt(configureOrder.getAddressHi()+configureOrder.getAddressLo(), 16);
+//                            Integer amount = Integer.parseInt(configureOrder.getAmountHi()+configureOrder.getAmountLo(), 16);
+                           String orgdata = HexUtil.byteToHex(msgByte);
+                           String tmepdata = orgdata.substring(6,14);
+                            String driftdata = orgdata.substring(14,22);
+
+                            String tmep = String.valueOf(Float.intBitsToFloat(Integer.parseInt(tmepdata, 16)));
+                            String drift = String.valueOf(Float.intBitsToFloat(Integer.parseInt(driftdata, 16)));
+
+                            configureSensorDataCondition.setOriginalData(orgdata);
+                            configureSensorDataCondition.setTempData(tmep);
+                            configureSensorDataCondition.setDriftData(drift);
+                            configureSensorDataCondition.setSensorId(configureSensor.getId());
+                            configureSensorDataCondition.setCreateTime(new Date());
+                            configureSensorDataCondition.setCreateBy("ceshi");
+                            configureSensorDataService = (IConfigureSensorDataService) SpringContextUtil.getBean(IConfigureSensorDataService.class);
+
+                            configureSensorDataService.insertConfigureSensorData(configureSensorDataCondition);
+                        }else{
+                            // 不符合结构
+                            ctx.close();
+                            return;
+                        }
+                    }
+                }
+            }
+
+
 //
 //            if (null != wxcxcDeviceGatewayList) {
 //                WxcxcDeviceGateway wxcxcDeviceGateway = null;
@@ -251,7 +323,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 //            } else {
 //                // 不符合结构
 ////                ctx.close();
-//                return;
+                return;
 //            }
 
 
