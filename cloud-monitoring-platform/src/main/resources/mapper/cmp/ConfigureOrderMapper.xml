@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ConfigureOrderMapper">
+    
+    <resultMap type="ConfigureOrder" id="ConfigureOrderResult">
+        <result property="id"    column="id"    />
+        <result property="sensorId"    column="sensor_id"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="addressHi"    column="address_hi"    />
+        <result property="addressLo"    column="address_lo"    />
+        <result property="amountHi"    column="amount_hi"    />
+        <result property="amountLo"    column="amount_lo"    />
+        <result property="cycleTime"    column="cycle_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectConfigureOrderVo">
+        select id, sensor_id, order_type, address_hi, address_lo, amount_hi, amount_lo, cycle_time, create_by, create_time, update_by, update_time from configure_order
+    </sql>
+
+    <select id="selectConfigureOrderList" parameterType="ConfigureOrder" resultMap="ConfigureOrderResult">
+        <include refid="selectConfigureOrderVo"/>
+        <where>  
+            <if test="sensorId != null "> and sensor_id = #{sensorId}</if>
+            <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="addressHi != null  and addressHi != ''"> and address_hi = #{addressHi}</if>
+            <if test="addressLo != null  and addressLo != ''"> and address_lo = #{addressLo}</if>
+            <if test="amountHi != null  and amountHi != ''"> and amount_hi = #{amountHi}</if>
+            <if test="amountLo != null  and amountLo != ''"> and amount_lo = #{amountLo}</if>
+            <if test="cycleTime != null "> and cycle_time = #{cycleTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectConfigureOrderById" parameterType="Long" resultMap="ConfigureOrderResult">
+        <include refid="selectConfigureOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertConfigureOrder" parameterType="ConfigureOrder">
+        insert into configure_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="sensorId != null">sensor_id,</if>
+            <if test="orderType != null">order_type,</if>
+            <if test="addressHi != null">address_hi,</if>
+            <if test="addressLo != null">address_lo,</if>
+            <if test="amountHi != null">amount_hi,</if>
+            <if test="amountLo != null">amount_lo,</if>
+            <if test="cycleTime != null">cycle_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="sensorId != null">#{sensorId},</if>
+            <if test="orderType != null">#{orderType},</if>
+            <if test="addressHi != null">#{addressHi},</if>
+            <if test="addressLo != null">#{addressLo},</if>
+            <if test="amountHi != null">#{amountHi},</if>
+            <if test="amountLo != null">#{amountLo},</if>
+            <if test="cycleTime != null">#{cycleTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigureOrder" parameterType="ConfigureOrder">
+        update configure_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sensorId != null">sensor_id = #{sensorId},</if>
+            <if test="orderType != null">order_type = #{orderType},</if>
+            <if test="addressHi != null">address_hi = #{addressHi},</if>
+            <if test="addressLo != null">address_lo = #{addressLo},</if>
+            <if test="amountHi != null">amount_hi = #{amountHi},</if>
+            <if test="amountLo != null">amount_lo = #{amountLo},</if>
+            <if test="cycleTime != null">cycle_time = #{cycleTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteConfigureOrderById" parameterType="Long">
+        delete from configure_order where id = #{id}
+    </delete>
+
+    <delete id="deleteConfigureOrderByIds" parameterType="String">
+        delete from configure_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

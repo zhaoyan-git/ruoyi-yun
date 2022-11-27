@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ConfigureSensorDataMapper">
+    
+    <resultMap type="ConfigureSensorData" id="ConfigureSensorDataResult">
+        <result property="id"    column="id"    />
+        <result property="sensorId"    column="sensor_id"    />
+        <result property="originalData"    column="original_data"    />
+        <result property="tempData"    column="temp_data"    />
+        <result property="driftData"    column="drift_data"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectConfigureSensorDataVo">
+        select id, sensor_id, original_data, temp_data, drift_data, create_time from configure_sensor_data
+    </sql>
+
+    <select id="selectConfigureSensorDataList" parameterType="ConfigureSensorData" resultMap="ConfigureSensorDataResult">
+        <include refid="selectConfigureSensorDataVo"/>
+        <where>  
+            <if test="sensorId != null "> and sensor_id = #{sensorId}</if>
+            <if test="originalData != null  and originalData != ''"> and original_data = #{originalData}</if>
+            <if test="tempData != null  and tempData != ''"> and temp_data = #{tempData}</if>
+            <if test="driftData != null  and driftData != ''"> and drift_data = #{driftData}</if>
+        </where>
+    </select>
+    
+    <select id="selectConfigureSensorDataById" parameterType="Long" resultMap="ConfigureSensorDataResult">
+        <include refid="selectConfigureSensorDataVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertConfigureSensorData" parameterType="ConfigureSensorData">
+        insert into configure_sensor_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="sensorId != null">sensor_id,</if>
+            <if test="originalData != null">original_data,</if>
+            <if test="tempData != null">temp_data,</if>
+            <if test="driftData != null">drift_data,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="sensorId != null">#{sensorId},</if>
+            <if test="originalData != null">#{originalData},</if>
+            <if test="tempData != null">#{tempData},</if>
+            <if test="driftData != null">#{driftData},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigureSensorData" parameterType="ConfigureSensorData">
+        update configure_sensor_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sensorId != null">sensor_id = #{sensorId},</if>
+            <if test="originalData != null">original_data = #{originalData},</if>
+            <if test="tempData != null">temp_data = #{tempData},</if>
+            <if test="driftData != null">drift_data = #{driftData},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteConfigureSensorDataById" parameterType="Long">
+        delete from configure_sensor_data where id = #{id}
+    </delete>
+
+    <delete id="deleteConfigureSensorDataByIds" parameterType="String">
+        delete from configure_sensor_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
