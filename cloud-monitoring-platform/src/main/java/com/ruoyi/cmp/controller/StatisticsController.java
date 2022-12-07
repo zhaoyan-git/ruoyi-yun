@@ -8,6 +8,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 
 /**
  * 统计信息
@@ -22,7 +24,7 @@ public class StatisticsController extends BaseController {
     private IStatisticsService statisticsService;
 
     @GetMapping
-    public AjaxResult getInfo() {
+    public AjaxResult getInfo() throws ParseException {
         return AjaxResult.success(statisticsService.getStatisticsInfo());
     }
 

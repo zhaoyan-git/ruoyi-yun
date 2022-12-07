@@ -1,10 +1,14 @@
 <template>
   <div class="dashboard-editor-container">
+    <el-row>
+      <el-col :span="24">
+        <panel-group v-if="flag" :totalNum="form.totalNum"  :projectNum="form.projectNum" :sNum="form.sNum" :eNum="form.eNum" />
+      </el-col>
+    </el-row>
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData"/>
 
     <el-row style="background:#ffffff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData"/>
+      <line-chart :chart-data="form.lineChartData"/>
     </el-row>
 
     <el-row :gutter="32">
@@ -47,10 +51,13 @@
         </div>
       </el-col>
     </el-row>
-    <el-row :gutter="32" v-if="flag">
-      <div class="chart-wrapper" style="background-color: #97a8be">
-        <CityMap :mapPointData="form.projectArr"/>
-      </div>
+
+    <el-row>
+      <el-col :span="24">
+        <div class="chart-wrapper" style="background-color: #97a8be">
+          <CityMap :mapPointData="form.projectArr"/>
+        </div>
+      </el-col>
     </el-row>
 
     <!--    <el-row :gutter="32">-->
@@ -92,24 +99,6 @@ import CityMap from './business/CityMap'
 import {getStatisticsFun} from "@/api/business/statistics";
 
 
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
 
 export default {
   name: 'Index',
@@ -125,7 +114,7 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis,
+      lineChartData: {},
       form: {},
       flag: false,
       value: new Date(),
@@ -161,9 +150,6 @@ export default {
     this.getStatistics();
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
-    },
     //获取统计信息
     getStatistics() {
       getStatisticsFun().then(response => {
@@ -172,11 +158,212 @@ export default {
         this.$set(this.form, "sNum", response.data.sNum);
         this.$set(this.form, "eNum", response.data.eNum);
         this.$set(this.form, "projectArr", response.data.projectArr);
+
+        var json = {};
+        var ar1 = eval(response.data.dtuDataList);
+        var ar2 = eval(response.data.exceptionDataList);
+        var ja1 = [];
+        for (var i = 0; i < ar1.length; i++) {
+          ja1.push(ar1[i]*1);
+        }
+        var ja2 = [];
+        for (var i = 0; i < ar2.length; i++) {
+          ja2.push(ar2[i]*1);
+        }
+        json.expectedData = ja1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        json.actualData = ja2;
+        this.$set(this.form, "lineChartData", json);
         this.flag = true;
       });
     },
     dataClickFun(data){
-      debugger;
+
 
     },
   }

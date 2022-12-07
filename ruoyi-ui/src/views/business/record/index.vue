@@ -1,95 +1,63 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="所属项目" prop="projectId">
+      <el-form-item label="结构物" prop="sid">
+        <el-select clearable v-model="queryParams.sid"
+                   placeholder="请选择所属结构物"
+        >
+          <el-option
+            v-for="item in formProjectStructureData"
+            v-bind:key="item.id"
+            :label="item.name"
+            :value="parseInt(item.id)"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="关键词" prop="keyWork">
         <el-input
-          v-model="queryParams.projectId"
-          placeholder="请输入所属项目"
+          v-model="queryParams.keyWork"
+          placeholder="请输入告警源,告警信息"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否已读" prop="readFlag">
-        <el-select v-model="queryParams.readFlag" placeholder="是否已读" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_yes_no"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
+      <el-form-item >
+        <el-checkbox-group v-model="checkedSources" @change="handleCheckedCitiesChange">
+          <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['cmp:record:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['cmp:record:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['cmp:record:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['cmp:record:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-
-    <el-table v-loading="loading" :data="recordList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="内容" align="center" prop="content" />
-      <el-table-column label="所属项目" align="center" prop="projectId" />
-      <el-table-column label="是否已读" align="center" prop="readFlag" >
+    <el-table v-loading="loading" :data="recordList" @selection-change="handleSelectionChange"  :default-sort = "{prop: 'lev', order: 'descending'}">
+      <el-table-column label="结构物" align="center" prop="sname" />
+      <el-table-column label="告警源" align="center" prop="alarmSource" />
+      <el-table-column label="等级" align="center" prop="lev"  sortable />
+      <el-table-column label="告警信息" align="center" prop="alarmInfo" width="150" />
+      <el-table-column label="产生次数" align="center" prop="prodNum" sortable />
+      <el-table-column label="产生时间" align="center" prop="prodDate" sortable >
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_yes_no" :value="scope.row.readFlag"/>
+          <span>{{ parseTime(scope.row.prodDate) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateDate" sortable>
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.updateDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+<!--          <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cmp:record:edit']"
-          >修改</el-button>
+          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -132,15 +100,18 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+      <div slot="footer" class="dialog-footer">63</div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {listStructure} from "@/api/business/structure";
+
+/*
+const cityOptions = ['数据异常', '异物入侵', 'DTU异常', '传感器异常','网关异常','节点异常'];
+*/
+const cityOptions = ['数据异常'];
 import { listRecord, getRecord, delRecord, addRecord, updateRecord } from "@/api/business/record";
 
 export default {
@@ -170,25 +141,31 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        title: null,
-        content: null,
-        projectId: null,
-        readFlag: null,
+        sid: null,
+        keyWork:null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      checkAll: false,
+     /* checkedSources: ['数据异常', '异物入侵', 'DTU异常', '传感器异常','网关异常','节点异常'],*/
+      checkedSources: ['数据异常'],
+      cities: cityOptions,
+      isIndeterminate: true,
+      formProjectStructureData: [],
     };
   },
   created() {
-    this.getList();
+    this.getList()
+    this.getStrctureListFun()
   },
   methods: {
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
+      this.queryParams.checkedSources = this.checkedSources;
       listRecord(this.queryParams).then(response => {
         this.recordList = response.rows;
         this.total = response.total;
@@ -280,6 +257,28 @@ export default {
       this.download('cmp/record/export', {
         ...this.queryParams
       }, `record_${new Date().getTime()}.xlsx`)
+    },
+    handleCheckAllChange(val) {
+      this.checkedSources = val ? cityOptions : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.cities.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+    },
+    //获取结构物信息
+    getStrctureListFun(){
+      listStructure({}).then(res => {
+        if (res.code == 200) {
+          for (let index in res.rows) {
+            this.formProjectStructureData.push({
+              name: res.rows[index].name,
+              id: res.rows[index].id,
+            })
+          }
+        }
+      });
     }
   }
 };

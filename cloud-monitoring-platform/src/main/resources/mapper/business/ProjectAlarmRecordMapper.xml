@@ -1,65 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.cmp.mapper.ProjectAlarmRecordMapper">
-    
+
     <resultMap type="ProjectAlarmRecord" id="ProjectAlarmRecordResult">
-        <result property="id"    column="id"    />
-        <result property="title"    column="title"    />
-        <result property="content"    column="content"    />
-        <result property="projectId"    column="project_id"    />
-        <result property="readFlag"    column="read_flag"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <result property="alarmSource" column="alarmSource"/>
+        <result property="lev" column="lev"/>
+        <result property="alarmInfo" column="alarmInfo"/>
+        <result property="prodNum" column="prodNum"/>
+        <result property="prodDate" column="prodDate"/>
+        <result property="updateDate" column="updateDate"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectProjectAlarmRecordVo">
-        select id, title, content, project_id, read_flag, create_time, update_time from project_alarm_record
+        select id,
+               sid,
+               sname,
+               alarmSource,
+               lev,
+               create_time,
+               update_time,
+               alarmInfo,
+               prodNum,prodDate,updateDate
+        from project_alarm_record
     </sql>
 
     <select id="selectProjectAlarmRecordList" parameterType="ProjectAlarmRecord" resultMap="ProjectAlarmRecordResult">
         <include refid="selectProjectAlarmRecordVo"/>
-        <where>  
-            <if test="title != null  and title != ''"> and title = #{title}</if>
-            <if test="content != null  and content != ''"> and content = #{content}</if>
-            <if test="projectId != null "> and project_id = #{projectId}</if>
-            <if test="readFlag != null  and readFlag != ''"> and read_flag = #{readFlag}</if>
+        <where>
+            <if test="sid != null ">and sid = #{sid}</if>
+            <if test="sname != null  and sname != ''">and sname = #{sname}</if>
+            <if test="alarmSource != null and alarmSource != ''">and alarmSource = #{alarmSource}</if>
+            <if test="lev != null  and lev != ''">and lev = #{lev}</if>
+            <if test="alarmInfo != null  and alarmInfo != ''">and alarmInfo = #{alarmInfo}</if>
+            <if test="prodNum != null  and prodNum != ''">and prodNum = #{prodNum}</if>
+            <if test="keyWork != null  and keyWork != ''">and (alarmSource = #{alarmSource} or alarmInfo = #{alarmInfo}) </if>
+            <if test="checkedSources != null  and checkedSources != ''">and alarmSource in
+                <foreach collection="checkedSources" item="source" open="(" separator="," close=")">
+                    #{source}
+                </foreach>
+             </if>
+            <if test="createTime_start != null">and  prodDate >= #{createTime_start}</if>
+            <if test="createTime_end != null">and  prodDate &lt;= #{createTime_end}</if>
         </where>
     </select>
-    
+
     <select id="selectProjectAlarmRecordById" parameterType="Long" resultMap="ProjectAlarmRecordResult">
         <include refid="selectProjectAlarmRecordVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertProjectAlarmRecord" parameterType="ProjectAlarmRecord" useGeneratedKeys="true" keyProperty="id">
         insert into project_alarm_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="title != null">title,</if>
-            <if test="content != null">content,</if>
-            <if test="projectId != null">project_id,</if>
-            <if test="readFlag != null">read_flag,</if>
+            <if test="sid != null">sid,</if>
+            <if test="sname != null">sname,</if>
+            <if test="alarmSource != null">alarmSource,</if>
+            <if test="lev != null">lev,</if>
+            <if test="alarmInfo != null">alarmInfo,</if>
+            <if test="prodNum != null">prodNum,</if>
+            <if test="prodDate != null">prodDate,</if>
+            <if test="updateDate != null">updateDate,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="title != null">#{title},</if>
-            <if test="content != null">#{content},</if>
-            <if test="projectId != null">#{projectId},</if>
-            <if test="readFlag != null">#{readFlag},</if>
+            <if test="sid != null">#{sid},</if>
+            <if test="sname != null">#{sname},</if>
+            <if test="alarmSource != null">#{alarmSource},</if>
+            <if test="lev != null">#{lev},</if>
+            <if test="prodNum != null">#{prodNum},</if>
+            <if test="prodDate != null">#{prodDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateProjectAlarmRecord" parameterType="ProjectAlarmRecord">
         update project_alarm_record
         <trim prefix="SET" suffixOverrides=",">
-            <if test="title != null">title = #{title},</if>
-            <if test="content != null">content = #{content},</if>
-            <if test="projectId != null">project_id = #{projectId},</if>
-            <if test="readFlag != null">read_flag = #{readFlag},</if>
+            <if test="sid != null">sid = #{title},</if>
+            <if test="sname != null">sname = #{sname},</if>
+            <if test="alarmSource != null">alarmSource = #{alarmSource},</if>
+            <if test="lev != null">lev = #{lev},</if>
+            <if test="prodNum != null">prodNum = #{prodNum},</if>
+            <if test="prodDate != null">prodDate = #{prodDate},</if>
+            <if test="updateDate != null">updateDate = #{updateDate},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -67,11 +100,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteProjectAlarmRecordById" parameterType="Long">
-        delete from project_alarm_record where id = #{id}
+        delete
+        from project_alarm_record
+        where id = #{id}
     </delete>
 
     <delete id="deleteProjectAlarmRecordByIds" parameterType="String">
-        delete from project_alarm_record where id in 
+        delete from project_alarm_record where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

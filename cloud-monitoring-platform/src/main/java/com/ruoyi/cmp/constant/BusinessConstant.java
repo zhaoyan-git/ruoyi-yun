@@ -14,4 +14,7 @@ public class BusinessConstant {
     /**开关按钮显示 0 true   1 false*/
     public static final String SWITCH_YES = "0";
     public static final String SWITCH_NO = "1";
+    /**活动状态  0 活动 1 不活动*/
+    public static final String STATUS_ON = "0";
+    public static final String STATUS_OFF = "1";
 }

@@ -287,7 +287,7 @@
                           >配置DTU
                           </el-button>
                         </el-dropdown-item>
-                        <el-dropdown-item>
+<!--                        <el-dropdown-item>
                           <el-button
                             size="mini"
                             type="text"
@@ -295,7 +295,7 @@
                             v-hasPermi="['business:structure:edit']"
                           >配置采集仪
                           </el-button>
-                        </el-dropdown-item>
+                        </el-dropdown-item>-->
                         <el-dropdown-item>
                           <el-button
                             size="mini"

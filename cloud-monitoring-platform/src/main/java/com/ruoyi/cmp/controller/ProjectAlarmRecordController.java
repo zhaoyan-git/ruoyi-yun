@@ -2,6 +2,7 @@ package com.ruoyi.cmp.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,83 +23,76 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
- * 【请填写功能名称】Controller
- * 
+ * 告警记录Controller
+ *
  * @author zy
  * @date 2022-09-19
  */
 @RestController
 @RequestMapping("/cmp/record")
-public class ProjectAlarmRecordController extends BaseController
-{
+public class ProjectAlarmRecordController extends BaseController {
     @Autowired
     private IProjectAlarmRecordService projectAlarmRecordService;
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询告警记录列表
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ProjectAlarmRecord projectAlarmRecord)
-    {
+    public TableDataInfo list(ProjectAlarmRecord projectAlarmRecord) {
         startPage();
         List<ProjectAlarmRecord> list = projectAlarmRecordService.selectProjectAlarmRecordList(projectAlarmRecord);
         return getDataTable(list);
     }
 
     /**
-     * 导出【请填写功能名称】列表
+     * 导出告警记录列表
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:export')")
-    @Log(title = "【请填写功能名称】", businessType = BusinessType.EXPORT)
+    @Log(title = "告警记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ProjectAlarmRecord projectAlarmRecord)
-    {
+    public void export(HttpServletResponse response, ProjectAlarmRecord projectAlarmRecord) {
         List<ProjectAlarmRecord> list = projectAlarmRecordService.selectProjectAlarmRecordList(projectAlarmRecord);
         ExcelUtil<ProjectAlarmRecord> util = new ExcelUtil<ProjectAlarmRecord>(ProjectAlarmRecord.class);
-        util.exportExcel(response, list, "【请填写功能名称】数据");
+        util.exportExcel(response, list, "告警记录数据");
     }
 
     /**
-     * 获取【请填写功能名称】详细信息
+     * 获取告警记录详细信息
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(projectAlarmRecordService.selectProjectAlarmRecordById(id));
     }
 
     /**
-     * 新增【请填写功能名称】
+     * 新增告警记录
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:add')")
-    @Log(title = "【请填写功能名称】", businessType = BusinessType.INSERT)
+    @Log(title = "告警记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ProjectAlarmRecord projectAlarmRecord)
-    {
+    public AjaxResult add(@RequestBody ProjectAlarmRecord projectAlarmRecord) {
         return toAjax(projectAlarmRecordService.insertProjectAlarmRecord(projectAlarmRecord));
     }
 
     /**
-     * 修改【请填写功能名称】
+     * 修改告警记录
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:edit')")
-    @Log(title = "【请填写功能名称】", businessType = BusinessType.UPDATE)
+    @Log(title = "告警记录", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ProjectAlarmRecord projectAlarmRecord)
-    {
+    public AjaxResult edit(@RequestBody ProjectAlarmRecord projectAlarmRecord) {
         return toAjax(projectAlarmRecordService.updateProjectAlarmRecord(projectAlarmRecord));
     }
 
     /**
-     * 删除【请填写功能名称】
+     * 删除告警记录
      */
     @PreAuthorize("@ss.hasPermi('cmp:record:remove')")
-    @Log(title = "【请填写功能名称】", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @Log(title = "告警记录", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(projectAlarmRecordService.deleteProjectAlarmRecordByIds(ids));
     }
 }

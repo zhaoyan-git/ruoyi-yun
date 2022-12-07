@@ -111,7 +111,6 @@
 
     <el-table v-loading="loading" :data="pointList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
       <el-table-column label="测点名称" align="center" prop="name" />
       <el-table-column label="监测因素" align="center" prop="mfId" />
       <el-table-column label="数据来源方式" align="center" prop="dataSourceTypeId" />

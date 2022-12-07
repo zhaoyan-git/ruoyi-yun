@@ -176,7 +176,7 @@ export default {
       });
     },
     dataClickFun(data){
-      debugger;
+
 
     },
   }

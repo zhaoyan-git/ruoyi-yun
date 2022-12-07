@@ -30,7 +30,7 @@
             >
               <el-option
                 v-for="dict in evenNumbers"
-                告警记录="dict.value"
+                :key="dict.value"
                 :label="dict.label"
                 :value="dict.value"
 

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cmp.mapper.ThresholdConfigurationMapper">
+    
+    <resultMap type="ThresholdConfiguration" id="ThresholdConfigurationResult">
+        <result property="id"    column="id"    />
+        <result property="sid"    column="sid"    />
+        <result property="sname"    column="sname"    />
+        <result property="mpid"    column="mpid"    />
+        <result property="mpname"    column="mpname"    />
+        <result property="mfid"    column="mfid"    />
+        <result property="mfname"    column="mfname"    />
+        <result property="miid"    column="miid"    />
+        <result property="miname"    column="miname"    />
+        <result property="lev1value"    column="lev1value"    />
+        <result property="lev2value"    column="lev2value"    />
+        <result property="lev3value"    column="lev3value"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="type"    column="type"    />
+        <result property="rateType"    column="rateType"    />
+    </resultMap>
+
+    <sql id="selectThresholdConfigurationVo">
+        select id, type,rateType,sid, sname, mpid, mpname, mfid, mfname, miid, miname, lev1value, lev2value, lev3value, create_by, create_time, update_by, update_time, remark from threshold_configuration
+    </sql>
+
+    <select id="selectThresholdConfigurationList" parameterType="ThresholdConfiguration" resultMap="ThresholdConfigurationResult">
+        <include refid="selectThresholdConfigurationVo"/>
+        <where>  
+            <if test="sid != null "> and sid = #{sid}</if>
+            <if test="sname != null  and sname != ''"> and sname like concat('%', #{sname}, '%')</if>
+            <if test="mpid != null "> and mpid = #{mpid}</if>
+            <if test="mpname != null  and mpname != ''"> and mpname like concat('%', #{mpname}, '%')</if>
+            <if test="mfid != null  and mfid != ''"> and mfid = #{mfid}</if>
+            <if test="mfname != null  and mfname != ''"> and mfname like concat('%', #{mfname}, '%')</if>
+            <if test="miid != null  and miid != ''"> and miid = #{miid}</if>
+            <if test="miname != null  and miname != ''"> and miname like concat('%', #{miname}, '%')</if>
+            <if test="lev1value != null  and lev1value != ''"> and lev1value = #{lev1value}</if>
+            <if test="lev2value != null  and lev2value != ''"> and lev2value = #{lev2value}</if>
+            <if test="lev3value != null  and lev3value != ''"> and lev3value = #{lev3value}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="rateType != null  and rateType != ''"> and rateType = #{rateType}</if>
+        </where>
+    </select>
+    
+    <select id="selectThresholdConfigurationById" parameterType="Long" resultMap="ThresholdConfigurationResult">
+        <include refid="selectThresholdConfigurationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertThresholdConfiguration" parameterType="ThresholdConfiguration" useGeneratedKeys="true" keyProperty="id">
+        insert into threshold_configuration
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sid != null">sid,</if>
+            <if test="sname != null and sname != ''">sname,</if>
+            <if test="mpid != null">mpid,</if>
+            <if test="mpname != null and mpname != ''">mpname,</if>
+            <if test="mfid != null and mfid != ''">mfid,</if>
+            <if test="mfname != null and mfname != ''">mfname,</if>
+            <if test="miid != null and miid != ''">miid,</if>
+            <if test="miname != null and miname != ''">miname,</if>
+            <if test="lev1value != null and lev1value != ''">lev1value,</if>
+            <if test="lev2value != null and lev2value != ''">lev2value,</if>
+            <if test="lev3value != null and lev3value != ''">lev3value,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="type != null">type,</if>
+            <if test="rateType != null">rateType,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sid != null">#{sid},</if>
+            <if test="sname != null and sname != ''">#{sname},</if>
+            <if test="mpid != null">#{mpid},</if>
+            <if test="mpname != null and mpname != ''">#{mpname},</if>
+            <if test="mfid != null and mfid != ''">#{mfid},</if>
+            <if test="mfname != null and mfname != ''">#{mfname},</if>
+            <if test="miid != null and miid != ''">#{miid},</if>
+            <if test="miname != null and miname != ''">#{miname},</if>
+            <if test="lev1value != null and lev1value != ''">#{lev1value},</if>
+            <if test="lev2value != null and lev2value != ''">#{lev2value},</if>
+            <if test="lev3value != null and lev3value != ''">#{lev3value},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="type != null">#{type},</if>
+            <if test="rateType != null">#{rateType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateThresholdConfiguration" parameterType="ThresholdConfiguration">
+        update threshold_configuration
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sid != null">sid = #{sid},</if>
+            <if test="sname != null ">sname = #{sname},</if>
+            <if test="mpid != null">mpid = #{mpid},</if>
+            <if test="mpname != null ">mpname = #{mpname},</if>
+            <if test="mfid != null and mfid != ''">mfid = #{mfid},</if>
+            <if test="mfname != null ">mfname = #{mfname},</if>
+            <if test="miid != null ">miid = #{miid},</if>
+            <if test="miname != null ">miname = #{miname},</if>
+            <if test="lev1value != null ">lev1value = #{lev1value},</if>
+            <if test="lev2value != null ">lev2value = #{lev2value},</if>
+            <if test="lev3value != null ">lev3value = #{lev3value},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="rateType != null">rateType = #{rateType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteThresholdConfigurationById" parameterType="Long">
+        delete from threshold_configuration where id = #{id}
+    </delete>
+
+    <delete id="deleteThresholdConfigurationByIds" parameterType="String">
+        delete from threshold_configuration where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
