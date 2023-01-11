@@ -93,7 +93,9 @@ export default {
 	},
 	computed: {
 		// 计算两个周期值
-		cycleTotal: function () {
+
+
+    cycleTotal: function () {
 			const cycle01 = this.checkNum(this.cycle01, 0, 22)
 			const cycle02 = this.checkNum(this.cycle02, cycle01 ? cycle01 + 1 : 1, 23)
 			return cycle01 + '-' + cycle02;

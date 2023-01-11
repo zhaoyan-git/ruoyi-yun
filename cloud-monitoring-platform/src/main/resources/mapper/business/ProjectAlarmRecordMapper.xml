@@ -16,6 +16,7 @@
         <result property="updateDate" column="updateDate"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="isDelete"/>
     </resultMap>
 
     <sql id="selectProjectAlarmRecordVo">
@@ -27,7 +28,7 @@
                create_time,
                update_time,
                alarmInfo,
-               prodNum,prodDate,updateDate
+               prodNum,prodDate,updateDate,isDelete
         from project_alarm_record
     </sql>
 
@@ -48,6 +49,7 @@
              </if>
             <if test="createTime_start != null">and  prodDate >= #{createTime_start}</if>
             <if test="createTime_end != null">and  prodDate &lt;= #{createTime_end}</if>
+            <if test="isDelete != null">and  isDelete = #{isDelete}</if>
         </where>
     </select>
 
@@ -69,6 +71,7 @@
             <if test="updateDate != null">updateDate,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="isDelete != null">isDelete,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sid != null">#{sid},</if>
@@ -80,6 +83,7 @@
             <if test="updateDate != null">#{updateDate},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelete != null">#{isDelete},</if>
         </trim>
     </insert>
 
@@ -95,8 +99,16 @@
             <if test="updateDate != null">updateDate = #{updateDate},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelete != null">isDelete = #{isDelete},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateProjectAlarmRecordIsDeleteByIds" parameterType="String">
+        update project_alarm_record set isDelete = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </update>
 
     <delete id="deleteProjectAlarmRecordById" parameterType="Long">

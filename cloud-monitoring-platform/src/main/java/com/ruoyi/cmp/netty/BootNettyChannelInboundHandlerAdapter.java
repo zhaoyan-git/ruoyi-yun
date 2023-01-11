@@ -6,6 +6,7 @@ import com.ruoyi.cmp.domain.ConfigureSensor;
 import com.ruoyi.cmp.domain.ConfigureSensorData;
 import com.ruoyi.cmp.domain.DeviceGateway;
 import com.ruoyi.cmp.service.*;
+import com.ruoyi.cmp.utils.CreateAlarmRecordUtils;
 import com.ruoyi.cmp.utils.HexUtil;
 import com.ruoyi.cmp.utils.SpringContextUtil;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -246,6 +247,12 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                             configureSensorDataService = (IConfigureSensorDataService) SpringContextUtil.getBean(IConfigureSensorDataService.class);
 
                             configureSensorDataService.insertConfigureSensorData(configureSensorDataCondition);
+                            try{
+                                String alarmRecordForSensor = CreateAlarmRecordUtils.createAlarmRecordForSensor(configureSensorDataCondition);
+                                System.out.println(alarmRecordForSensor);
+                            }catch (Exception e){
+                                System.out.println("新增告警记录失败");
+                            }
                         }else{
                             // 不符合结构
                             ctx.close();

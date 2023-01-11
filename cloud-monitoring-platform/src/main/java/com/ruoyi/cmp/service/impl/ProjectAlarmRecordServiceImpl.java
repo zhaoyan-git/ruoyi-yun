@@ -39,6 +39,7 @@ public class ProjectAlarmRecordServiceImpl implements IProjectAlarmRecordService
      */
     @Override
     public List<ProjectAlarmRecord> selectProjectAlarmRecordList(ProjectAlarmRecord projectAlarmRecord) {
+        projectAlarmRecord.setIsDelete("0");
         return projectAlarmRecordMapper.selectProjectAlarmRecordList(projectAlarmRecord);
     }
 
@@ -75,6 +76,11 @@ public class ProjectAlarmRecordServiceImpl implements IProjectAlarmRecordService
     @Override
     public int deleteProjectAlarmRecordByIds(Long[] ids) {
         return projectAlarmRecordMapper.deleteProjectAlarmRecordByIds(ids);
+    }
+
+    @Override
+    public int updateProjectAlarmRecordIsDeleteByIds(Long[] ids) {
+        return projectAlarmRecordMapper.updateProjectAlarmRecordIsDeleteByIds(ids);
     }
 
     /**

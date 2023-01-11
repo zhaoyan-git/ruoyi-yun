@@ -51,20 +51,13 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-<!--          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['cmp:record:edit']"
-          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['cmp:record:remove']"
-          >删除</el-button>
+          >已读</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -245,7 +238,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除【请填写功能名称】编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认不在显示编号为"' + ids + '"的数据项？').then(function() {
         return delRecord(ids);
       }).then(() => {
         this.getList();

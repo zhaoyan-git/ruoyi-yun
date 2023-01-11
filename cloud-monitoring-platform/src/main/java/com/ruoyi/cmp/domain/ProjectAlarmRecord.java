@@ -41,8 +41,18 @@ public class ProjectAlarmRecord extends BaseEntity
     @Excel(name = "告警信息")
     private String alarmInfo;
 
+    public String getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(String isDelete) {
+        this.isDelete = isDelete;
+    }
+
     @Excel(name = "产生次数")
     private String prodNum;
+
+    private String isDelete;
 
     private Date createTime_start;
 

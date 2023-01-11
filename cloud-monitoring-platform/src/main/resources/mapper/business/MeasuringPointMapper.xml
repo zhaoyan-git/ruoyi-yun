@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and mp.name like concat('%', #{name}, '%')</if>
             <if test="mfId != null  and mfId != ''"> and mp.mf_id = #{mfId}</if>
             <if test="dataSourceTypeId != null "> and mp.data_source_type_id = #{dataSourceTypeId}</if>
-            <if test="equipmentId != null "> and mp.equipment_id = #{equipmentId}</if>
+            <if test="equipmentId != null "> and mp.equipment_id like concat('%', #{equipmentId}, '%')</if>
             <if test="groupName != null  and groupName != ''"> and mp.group_name like concat('%', #{groupName}, '%')</if>
             <if test="structureId != null "> and mp.structure_id = #{structureId}</if>
             <if test="lev != null "> and mp.lev = #{lev}</if>

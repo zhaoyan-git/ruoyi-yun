@@ -58,4 +58,6 @@ public interface ProjectAlarmRecordMapper
      * @return 结果
      */
     public int deleteProjectAlarmRecordByIds(Long[] ids);
+
+    public int updateProjectAlarmRecordIsDeleteByIds(Long[] ids);
 }

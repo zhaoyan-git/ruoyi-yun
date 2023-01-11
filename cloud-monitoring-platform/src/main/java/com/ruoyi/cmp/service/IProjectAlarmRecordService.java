@@ -43,6 +43,7 @@ public interface IProjectAlarmRecordService
      */
     public int updateProjectAlarmRecord(ProjectAlarmRecord projectAlarmRecord);
 
+
     /**
      * 批量删除【请填写功能名称】
      * 
@@ -50,6 +51,8 @@ public interface IProjectAlarmRecordService
      * @return 结果
      */
     public int deleteProjectAlarmRecordByIds(Long[] ids);
+
+    public int updateProjectAlarmRecordIsDeleteByIds(Long[] ids);
 
     /**
      * 删除【请填写功能名称】信息
