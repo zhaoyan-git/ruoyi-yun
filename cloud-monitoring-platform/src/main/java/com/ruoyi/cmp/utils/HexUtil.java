@@ -1,10 +1,44 @@
 package com.ruoyi.cmp.utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.util.CharsetUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 public class HexUtil {
+    public static void main(String[] args) {
+        String msg = "3F AB EC 5F";
+//        ByteBuf buf = (ByteBuf)msg
+        byte[] msgByte = msg.getBytes(CharsetUtil.UTF_8);
+//        byte[] msgByte = new byte[buf.readableBytes()];
+//        buf.readBytes(msgByte);
+        System.out.println("收到："+HexUtil.bytes2HexString(msgByte));
+        System.out.println("收到："+HexUtil.byteToHex(msgByte));
+        System.out.println("收到："+HexUtil.getCRC3(msgByte));
+        String str = "013D";
+        BigInteger b = new BigInteger(str, 16);
+        float value = Float.intBitsToFloat(b.intValue());
+        System.out.println(value);
+        String str11 = "010330BEA1F6783FABEC5F42B43314013D0001BC5242E73C62A535BF7F87DAFFFFFF6A00007660FFFFE07441FF6B8044A434A70359";
+        System.out.println("------------------------------");
+        System.out.println(str11.substring(6,14));
+        System.out.println(str11.substring(14,22));
+        System.out.println(str11.substring(22,30));
+        System.out.println(str11.substring(30,34));
+        System.out.println(str11.substring(38,46));
+        System.out.println(str11.substring(46,54));
+        System.out.println(str11.substring(54,62));
+        System.out.println(str11.substring(94,102));
+
+
+
+
+
+    }
+
     public static String byteToHex(byte[] bytes) {
         String strHex = "";
         StringBuilder sb = new StringBuilder("");

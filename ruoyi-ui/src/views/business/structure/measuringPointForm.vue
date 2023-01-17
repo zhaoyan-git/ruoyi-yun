@@ -66,6 +66,24 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item label="是否为基准点" class="formColumnClassForMPF" prop="isBenchmark">
+            <el-select
+              v-model="form.isBenchmark"
+              clearable
+              placeholder="请选择是否为基准点"
+              @change="benchmarkChangeFun"
+            >
+              <el-option
+                v-for="dict in dict.type.sys_yes_no"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="基准值" class="formColumnClassForMPF" prop="benchmarkValue" v-if="isShowBenchmark">
+            <el-input type="number" v-model="form.benchmarkValue" placeholder="请输入基准值"/>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -78,11 +96,6 @@
 </template>
 
 <script>
-import {
-  addCollector,
-  updateCollector,
-} from "@/api/business/collector";
-import {getTreeselectList} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import eleTree from "@/views/business/structure/eleTree";
@@ -98,7 +111,7 @@ import {listEquipment} from "@/api/business/equipment";
 export default {
   name: "MeasuringPointForm",
   components: {Treeselect, eleTree},
-  dicts: ['alarm_flag', 'structure_type', 'monitoring_factors', 'add_type', 'monitoring_factors', 'data_source_type'],
+  dicts: ['alarm_flag', 'structure_type', 'monitoring_factors', 'add_type', 'monitoring_factors', 'data_source_type', 'sys_yes_no'],
   props: ['sid', 'mf'],
   data() {
     return {
@@ -159,6 +172,7 @@ export default {
       isShowLev3: false,
       equipmentList: [],
       isSelect: false,
+      isShowBenchmark: false,
     };
   },
   //一般在初始化页面完成后，再对dom节点进行相关操作
@@ -296,8 +310,12 @@ export default {
     getNodeInfoByNodeIdFun(node) {
       if (node.data.label) {
         getPoint(node.data.id).then(response => {
-          if (response.data)
+          if (response.data) {
             this.form = response.data;
+            if (response.data.isBenchmark && response.data.isBenchmark == 'Y') {
+              this.isShowBenchmark = true;
+            }
+          }
           this.equipmentIdArr = JSON.parse(response.data.equipmentId);
         });
       }
@@ -317,6 +335,12 @@ export default {
           this.isSelect = true;
         }
       });
+    },
+    benchmarkChangeFun(value) {
+      this.isShowBenchmark = false;
+      if (value == "Y") {
+        this.isShowBenchmark = true;
+      }
     },
   }
 };

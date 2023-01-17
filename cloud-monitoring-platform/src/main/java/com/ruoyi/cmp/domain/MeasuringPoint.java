@@ -75,9 +75,30 @@ public class MeasuringPoint extends BaseEntity
     @Excel(name = "结构物ID")
     private Long structureId;
 
+    public String getIsBenchmark() {
+        return isBenchmark;
+    }
+
+    public void setIsBenchmark(String isBenchmark) {
+        this.isBenchmark = isBenchmark;
+    }
+
+    public Double getBenchmarkValue() {
+        return benchmarkValue;
+    }
+
+    public void setBenchmarkValue(Double benchmarkValue) {
+        this.benchmarkValue = benchmarkValue;
+    }
+
     /** 级别 */
     @Excel(name = "级别")
     private Long lev;
+    //是否为基准点
+    private String isBenchmark;
+    //基准值
+    private Double benchmarkValue;
+
 
 
     public Long getNodeId() {

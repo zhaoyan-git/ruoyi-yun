@@ -149,7 +149,7 @@
                           :prop="'domains.' + index + '.value'"
                           :rules="{required: true, message: '阈值不能为空', trigger: 'blur'}"
                         >
-                          <el-input v-model="domain.value"  lev="1" type="number"></el-input>
+                          <el-input v-model="domain.value"  lev="1" ></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="1.5">
@@ -184,17 +184,6 @@
           </div>
 
         </el-tab-pane>
-
-
-
-
-
-
-
-
-
-
-
 
         <el-tab-pane name="rateChange" label="变化速率">
           <div>

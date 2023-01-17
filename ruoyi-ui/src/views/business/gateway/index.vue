@@ -25,7 +25,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['cmp:gateway:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -36,7 +37,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['cmp:gateway:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -47,28 +49,29 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['cmp:gateway:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="gatewayList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="所属项目" align="center" prop="projectName" />
-      <el-table-column label="设备名称" align="center" prop="name" />
-      <el-table-column label="厂商" align="center" prop="manufacturerName" />
-      <el-table-column label="型号" align="center" prop="modelNumber" />
-      <el-table-column label="设备说明" align="center" prop="detail" />
-      <el-table-column label="sim卡号" align="center" prop="simNumber" />
-      <el-table-column label="DTU ID" align="center" prop="dtuId" />
-      <el-table-column label="是否在线" align="center" prop="onlineFlag" >
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="所属项目" align="center" prop="projectName"/>
+      <el-table-column label="设备名称" align="center" prop="name"/>
+      <el-table-column label="厂商" align="center" prop="manufacturerName"/>
+      <el-table-column label="型号" align="center" prop="modelNumber"/>
+      <el-table-column label="设备说明" align="center" prop="detail"/>
+      <el-table-column label="sim卡号" align="center" prop="simNumber"/>
+      <el-table-column label="DTU ID" align="center" prop="dtuId"/>
+      <el-table-column label="是否在线" align="center" prop="onlineFlag">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_yes_no" :value="scope.row.onlineFlag"></dict-tag>
         </template>
       </el-table-column>
-      <el-table-column label="ip" align="center" prop="ip" />
-      <el-table-column label="设备在地图上的纬度" align="center" prop="positionLat" width="150" />
-      <el-table-column label="设备在地图上的经度" align="center" prop="positionLng" width="150" />
+      <el-table-column label="ip" align="center" prop="ip"/>
+      <el-table-column label="设备在地图上的纬度" align="center" prop="positionLat" width="150"/>
+      <el-table-column label="设备在地图上的经度" align="center" prop="positionLng" width="150"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -77,14 +80,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cmp:gateway:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['cmp:gateway:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,7 +119,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备名称" prop="name" class="formColumnForGateWay">
-          <el-input maxlength="100" show-word-limit v-model="form.name" placeholder="请输入设备名称" />
+          <el-input maxlength="100" show-word-limit v-model="form.name" placeholder="请输入设备名称"/>
         </el-form-item>
         <el-form-item label="厂商" prop="manufacturer" class="formColumnForGateWay">
           <treeselect
@@ -126,16 +131,26 @@
           />
         </el-form-item>
         <el-form-item label="型号" prop="modelNumber" class="formColumnForGateWay">
-          <el-input maxlength="200" show-word-limit v-model="form.modelNumber"  placeholder="请输入型号" />
+          <el-input maxlength="200" show-word-limit v-model="form.modelNumber" placeholder="请输入型号"/>
         </el-form-item>
         <el-form-item label="设备说明" prop="detail" class="formColumnForGateWay">
-          <el-input maxlength="200" show-word-limit v-model="form.detail"  placeholder="请输入设备说明" />
+          <el-input maxlength="200" show-word-limit v-model="form.detail" placeholder="请输入设备说明"/>
         </el-form-item>
         <el-form-item label="sim卡号" prop="simNumber" class="formColumnForGateWay">
-          <el-input maxlength="200" show-word-limit v-model="form.simNumber"  placeholder="请输入sim卡号" />
+          <el-input maxlength="200" show-word-limit v-model="form.simNumber" placeholder="请输入sim卡号"/>
         </el-form-item>
         <el-form-item label="DTU ID" prop="dtuId" class="formColumnForGateWay">
-          <el-input maxlength="200" show-word-limit v-model="form.dtuId"  placeholder="请输入DTU ID" />
+          <el-select
+            v-model="form.dtuId"
+            placeholder="请选择所属DTU"
+          >
+            <el-option
+              v-for="item in dtuData"
+              v-bind:key="item.id"
+              :label="item.name"
+              :value="parseInt(item.id)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否在线" prop="onlineFlag" class="formColumnForGateWay">
           <el-select v-model="form.onlineFlag" placeholder="请输入是否在线">
@@ -148,13 +163,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="ip" prop="ip" class="formColumnForGateWay">
-          <el-input maxlength="200" show-word-limit v-model="form.ip" placeholder="请输入ip" />
+          <el-input maxlength="200" show-word-limit v-model="form.ip" placeholder="请输入ip"/>
         </el-form-item>
         <el-form-item label="设备在地图上的纬度" prop="positionLat" class="formColumnForGateWay">
-          <el-input type="number" v-model="form.positionLat"  placeholder="请输入设备在地图上的纬度" />
+          <el-input type="number" v-model="form.positionLat" placeholder="请输入设备在地图上的纬度"/>
         </el-form-item>
         <el-form-item label="设备在地图上的经度" prop="positionLng" class="formColumnForGateWay">
-          <el-input type="number" v-model="form.positionLng"  placeholder="请输入设备在地图上的经度" />
+          <el-input type="number" v-model="form.positionLng" placeholder="请输入设备在地图上的经度"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,11 +181,12 @@
 </template>
 
 <script>
-import { listGateway, getGateway, delGateway, addGateway, updateGateway } from "@/api/business/gateway";
+import {listGateway, getGateway, delGateway, addGateway, updateGateway} from "@/api/business/gateway";
 import {listProject} from "@/api/business/project";
 import {getTreeselectList} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listDtu} from "@/api/business/dtu";
 
 export default {
   name: "Gateway",
@@ -216,8 +232,12 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        ip: [
+          {message: '请输入正确的IP地址', validator: this.validateIP, trigger: 'blur'}
+        ],
       },
-      projectData:[],
+      projectData: [],
+      dtuData: [],
       //部门树选项
       deptOptions: undefined,
     };
@@ -225,6 +245,7 @@ export default {
   created() {
     this.getList();
     this.getProjectListFun();
+    this.getDtuDataListFun();
     this.getTreeselect();
   },
   methods: {
@@ -238,12 +259,25 @@ export default {
       });
     },
     /**获取项目列表*/
-    getProjectListFun(){
+    getProjectListFun() {
       this.projectData = [];
       listProject({}).then(res => {
         if (res.code == 200) {
           for (let index in res.rows) {
             this.projectData.push({
+              name: res.rows[index].name,
+              id: res.rows[index].id,
+            })
+          }
+        }
+      });
+    },
+    getDtuDataListFun() {
+      this.dtuData = [];
+      listDtu({}).then(res => {
+        if (res.code == 200) {
+          for (let index in res.rows) {
+            this.dtuData.push({
               name: res.rows[index].name,
               id: res.rows[index].id,
             })
@@ -292,7 +326,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -334,12 +368,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除网关管理编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除网关管理编号为"' + ids + '"的数据项？').then(function () {
         return delGateway(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -354,11 +389,23 @@ export default {
         this.deptOptions = response.data;
       });
     },
+    validateIP(rule, value, callback) {
+      if (value === '' || typeof value === 'undefined' || value == null) {
+        callback(new Error('请输入正确的IP地址'))
+      } else {
+        const reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+        if ((!reg.test(value)) && value !== '') {
+          callback(new Error('请输入正确的IP地址'))
+        } else {
+          callback()
+        }
+      }
+    },
   }
 };
 </script>
 <style>
-.formColumnForGateWay{
+.formColumnForGateWay {
   width: 80%;
 }
 </style>

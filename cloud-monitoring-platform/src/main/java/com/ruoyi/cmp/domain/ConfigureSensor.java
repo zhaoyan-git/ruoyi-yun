@@ -6,7 +6,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 【请填写功能名称】对象 configure_sensor
+ * 传感器对象 configure_sensor
  * 
  * @author zy
  * @date 2022-09-07
@@ -31,7 +31,7 @@ public class ConfigureSensor extends BaseEntity
     }
 
 
-    @Excel(name = "结构物Is")
+    @Excel(name = "结构物Id")
     private Long businessId;
     /** 设备id */
     private Long equipmentId;

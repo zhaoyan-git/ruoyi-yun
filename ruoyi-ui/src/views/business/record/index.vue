@@ -37,7 +37,7 @@
       <el-table-column label="结构物" align="center" prop="sname" />
       <el-table-column label="告警源" align="center" prop="alarmSource" />
       <el-table-column label="等级" align="center" prop="lev"  sortable />
-      <el-table-column label="告警信息" align="center" prop="alarmInfo" width="150" />
+      <el-table-column label="告警信息" align="center" prop="alarmInfo" width="150" :show-overflow-tooltip="true" />
       <el-table-column label="产生次数" align="center" prop="prodNum" sortable />
       <el-table-column label="产生时间" align="center" prop="prodDate" sortable >
         <template slot-scope="scope">
@@ -54,9 +54,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['cmp:record:remove']"
           >已读</el-button>
         </template>
       </el-table-column>

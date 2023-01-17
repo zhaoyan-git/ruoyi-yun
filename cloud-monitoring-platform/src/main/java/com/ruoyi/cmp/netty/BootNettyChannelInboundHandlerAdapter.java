@@ -1,10 +1,7 @@
 package com.ruoyi.cmp.netty;
 
 
-import com.ruoyi.cmp.domain.ConfigureOrder;
-import com.ruoyi.cmp.domain.ConfigureSensor;
-import com.ruoyi.cmp.domain.ConfigureSensorData;
-import com.ruoyi.cmp.domain.DeviceGateway;
+import com.ruoyi.cmp.domain.*;
 import com.ruoyi.cmp.service.*;
 import com.ruoyi.cmp.utils.CreateAlarmRecordUtils;
 import com.ruoyi.cmp.utils.HexUtil;
@@ -22,10 +19,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,15 +34,18 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
     // 用于记录和管理所有客户端的channel
     public static ChannelGroup users = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     @Autowired
-    private IDeviceGatewayService deviceGatewayService ;
+    private IDeviceGatewayService deviceGatewayService;
     @Autowired
     private IConfigureSensorService configureSensorService;
     @Autowired
     private IConfigureOrderService configureOrderService;
     @Autowired
     private IConfigureSensorDataService configureSensorDataService;
+    @Autowired
+    private IConfigureDtuService configureDtuService;
 
 //    private IDeviceService deviceService;
+
     /**
      * 从客户端收到新的数据时，这个方法会在收到消息时被调用
      *
@@ -54,14 +56,16 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception, IOException {
         // 读取数据
         ByteBuf buf = (ByteBuf) msg;
+        String subside = buf.toString(CharsetUtil.UTF_8);
         byte[] msgByte = new byte[buf.readableBytes()];
         buf.readBytes(msgByte);
-        System.out.println("收到："+HexUtil.bytes2HexString(msgByte));
-        System.out.println("收到："+HexUtil.byteToHex(msgByte));
+        System.out.println("收到：" + HexUtil.bytes2HexString(msgByte)); //字节转换成16进制
+        System.out.println("收到：" + HexUtil.byteToHex(msgByte));
         // 获取IP
+
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
-        System.out.println("clientIp收到："+clientIp);
+        System.out.println("clientIp收到：" + clientIp);
 
         // DTU 首次登录包
         // 长度21B
@@ -100,7 +104,6 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
             deviceGatewayCondition.setDtuId(dtuId);
             deviceGatewayCondition.setSimNumber(phoneNumber);
             deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
-
             List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
 
             // 在系统中查询是否有该DTU
@@ -128,8 +131,111 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                 return;
             }
 
-        }
+        } else if (655 == msgByte.length) {
+            System.out.println("read:" + HexUtil.byteToHex(msgByte));
+            // 接收
+            // 根据IP判断网关
+            // 在系统中查询是否有该DTU
+            DeviceGateway deviceGatewayCondition = new DeviceGateway();
+            //ip
+            deviceGatewayCondition.setIp(clientIp);
+            //在线设备状态
+            deviceGatewayCondition.setOnlineFlag("Y");
+            deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+            configureDtuService = (IConfigureDtuService) SpringContextUtil.getBean(IConfigureDtuService.class);
+            List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+            if (null != deviceGatewayList && deviceGatewayList.size() > 0) {
+                for (DeviceGateway deviceGateway : deviceGatewayList) {
+                    String slaveUnitId = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1));
+                    String slaveCode = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 1, 2));
+                    String dataLength = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 2, 3));
 
+                    System.out.println("地址：" + slaveUnitId);
+                    System.out.println("类型：" + slaveCode);
+                    System.out.println("长度：" + dataLength);
+
+                    ConfigureSensorData configureSensorDataCondition = new ConfigureSensorData();
+                    //通过网关--> DTU--> 设备 --> 传感器
+                    ConfigureDtu dtu = configureDtuService.selectConfigureDtuById(Long.parseLong(deviceGateway.getDtuId()));
+                    ConfigureSensor configureSensorCondition = new ConfigureSensor();
+                    /*configureSensorCondition.setBusinessId(deviceGateway.getId());*/
+                    configureSensorCondition.setNo(slaveUnitId);
+                    configureSensorCondition.setEquipmentId(dtu.getEquipmentId());
+                    configureSensorService = (IConfigureSensorService) SpringContextUtil.getBean(IConfigureSensorService.class);
+
+                    List<ConfigureSensor> configureSensorList = configureSensorService.selectConfigureSensorList(configureSensorCondition);
+                    for (ConfigureSensor configureSensor : configureSensorList) {
+                        ConfigureOrder configureOrderCondition = new ConfigureOrder();
+                        configureOrderCondition.setSensorId(configureSensor.getId());
+                        configureOrderCondition.setOrderType(slaveCode);
+                        configureOrderService = (IConfigureOrderService) SpringContextUtil.getBean(IConfigureOrderService.class);
+
+                        List<ConfigureOrder> configureOrderList = configureOrderService.selectConfigureOrderList(configureOrderCondition);
+                        if (null != configureOrderList && configureOrderList.size() > 0) {
+                            ConfigureOrder configureOrder = configureOrderList.get(0);
+//                            Integer address = Integer.parseInt(configureOrder.getAddressHi()+configureOrder.getAddressLo(), 16);
+//                            Integer amount = Integer.parseInt(configureOrder.getAmountHi()+configureOrder.getAmountLo(), 16);
+                            subside = subside.substring(439, 597);  //todo:不知道咋解析,演示先写上
+                            subside = subside.replaceAll(" ", "");
+
+
+                            BigInteger dipXInter = new BigInteger(subside.substring(6, 14), 16);
+                            String dipX = Float.intBitsToFloat(dipXInter.intValue()) + "";
+
+                            BigInteger dipYInter = new BigInteger(subside.substring(14, 22), 16);
+                            String dipY = Float.intBitsToFloat(dipYInter.intValue()) + "";
+
+                            BigInteger dipZInter = new BigInteger(subside.substring(22, 30), 16);
+                            String dipZ = Float.intBitsToFloat(dipZInter.intValue()) + "";
+
+                            BigInteger dipSensorTempInt = new BigInteger(subside.substring(30, 34), 16);
+                            String dipSensorTemp = Float.intBitsToFloat(dipSensorTempInt.intValue()) + "";
+
+                            BigInteger vibrationXInt = new BigInteger(subside.substring(38, 46), 16);
+                            String vibrationX = Float.intBitsToFloat(vibrationXInt.intValue()) + "";
+
+                            BigInteger vibrationYInt = new BigInteger(subside.substring(46, 54), 16);
+                            String vibrationY = Float.intBitsToFloat(vibrationYInt.intValue()) + "";
+
+                            BigInteger vibrationZInt = new BigInteger(subside.substring(54, 62), 16);
+                            String vibrationZ = Float.intBitsToFloat(vibrationZInt.intValue()) + "";
+
+                            BigInteger subsideDispValueInt = new BigInteger(subside.substring(94, 102), 16);
+                            String subsideDispValue = Float.intBitsToFloat(subsideDispValueInt.intValue()) + "";
+                            configureSensorDataCondition.setDriftData(subsideDispValue);
+                            configureSensorDataCondition.setSensorId(configureSensor.getId());
+                            configureSensorDataCondition.setCreateTime(new Date());
+                            configureSensorDataCondition.setCreateBy("ceshi");
+                            configureSensorDataCondition.setDipX(dipX);
+                            configureSensorDataCondition.setDipY(dipY);
+                            configureSensorDataCondition.setDipZ(dipZ);
+                            configureSensorDataCondition.setDipSensorTemp(dipSensorTemp);
+                            configureSensorDataCondition.setVibrationX(vibrationX);
+                            configureSensorDataCondition.setVibrationY(vibrationY);
+                            configureSensorDataCondition.setVibrationZ(vibrationZ);
+                            configureSensorDataCondition.setSubsideDispValue(subsideDispValue);
+                            configureSensorDataService = (IConfigureSensorDataService) SpringContextUtil.getBean(IConfigureSensorDataService.class);
+
+                            configureSensorDataService.insertConfigureSensorData(configureSensorDataCondition);
+                            try {
+                                String alarmRecordForSensor = CreateAlarmRecordUtils.createAlarmRecordForDisplacement(configureSensorDataCondition);
+                                System.out.println(alarmRecordForSensor);
+                                ctx.close();
+                            } catch (Exception e) {
+                                System.out.println("新增位移告警记录失败" + e);
+                                ctx.close();
+                            }
+                        } else {
+                            // 不符合结构
+                            ctx.close();
+                            return;
+                        }
+                    }
+                }
+            }
+
+
+        }
         // DTU 心跳包
         else if (1 == msgByte.length) {
 //            if ("fe".equals(HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1)))) {
@@ -199,41 +305,44 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
             //在线设备状态
             deviceGatewayCondition.setOnlineFlag("Y");
             deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+            configureDtuService = (IConfigureDtuService) SpringContextUtil.getBean(IConfigureDtuService.class);
             List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
 
             if (null != deviceGatewayList && deviceGatewayList.size() > 0) {
-                for (DeviceGateway deviceGateway : deviceGatewayList){
+                for (DeviceGateway deviceGateway : deviceGatewayList) {
 
                     String slaveUnitId = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1));
                     String slaveCode = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 1, 2));
                     String dataLength = HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 2, 3));
 
-                    System.out.println("地址："+slaveUnitId);
-                    System.out.println("类型："+slaveCode);
-                    System.out.println("长度："+dataLength);
+                    System.out.println("地址：" + slaveUnitId);
+                    System.out.println("类型：" + slaveCode);
+                    System.out.println("长度：" + dataLength);
 
-                    ConfigureSensorData configureSensorDataCondition  = new ConfigureSensorData();
-
+                    ConfigureSensorData configureSensorDataCondition = new ConfigureSensorData();
+                    //通过网关--> DTU--> 设备 --> 传感器
+                    ConfigureDtu dtu = configureDtuService.selectConfigureDtuById(Long.parseLong(deviceGateway.getDtuId()));
                     ConfigureSensor configureSensorCondition = new ConfigureSensor();
-                    configureSensorCondition.setBusinessId(deviceGateway.getId());
+                    /*configureSensorCondition.setBusinessId(deviceGateway.getId());*/
                     configureSensorCondition.setNo(slaveUnitId);
+                    configureSensorCondition.setEquipmentId(dtu.getEquipmentId());
                     configureSensorService = (IConfigureSensorService) SpringContextUtil.getBean(IConfigureSensorService.class);
 
                     List<ConfigureSensor> configureSensorList = configureSensorService.selectConfigureSensorList(configureSensorCondition);
-                    for(ConfigureSensor configureSensor:configureSensorList){
+                    for (ConfigureSensor configureSensor : configureSensorList) {
                         ConfigureOrder configureOrderCondition = new ConfigureOrder();
                         configureOrderCondition.setSensorId(configureSensor.getId());
                         configureOrderCondition.setOrderType(slaveCode);
                         configureOrderService = (IConfigureOrderService) SpringContextUtil.getBean(IConfigureOrderService.class);
 
                         List<ConfigureOrder> configureOrderList = configureOrderService.selectConfigureOrderList(configureOrderCondition);
-                        if( null != configureOrderList && configureOrderList.size() > 0){
+                        if (null != configureOrderList && configureOrderList.size() > 0) {
                             ConfigureOrder configureOrder = configureOrderList.get(0);
 //                            Integer address = Integer.parseInt(configureOrder.getAddressHi()+configureOrder.getAddressLo(), 16);
 //                            Integer amount = Integer.parseInt(configureOrder.getAmountHi()+configureOrder.getAmountLo(), 16);
-                           String orgdata = HexUtil.byteToHex(msgByte);
-                           String tmepdata = orgdata.substring(6,14);
-                            String driftdata = orgdata.substring(14,22);
+                            String orgdata = HexUtil.byteToHex(msgByte);
+                            String tmepdata = orgdata.substring(6, 14);
+                            String driftdata = orgdata.substring(14, 22);
 
                             String tmep = String.valueOf(Float.intBitsToFloat(Integer.parseInt(tmepdata, 16)));
                             String drift = String.valueOf(Float.intBitsToFloat(Integer.parseInt(driftdata, 16)));
@@ -247,13 +356,15 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                             configureSensorDataService = (IConfigureSensorDataService) SpringContextUtil.getBean(IConfigureSensorDataService.class);
 
                             configureSensorDataService.insertConfigureSensorData(configureSensorDataCondition);
-                            try{
-                                String alarmRecordForSensor = CreateAlarmRecordUtils.createAlarmRecordForSensor(configureSensorDataCondition);
+                            try {
+                                String alarmRecordForSensor = CreateAlarmRecordUtils.createAlarmRecordForTemp(configureSensorDataCondition);
                                 System.out.println(alarmRecordForSensor);
-                            }catch (Exception e){
-                                System.out.println("新增告警记录失败");
+                                ctx.close();
+                            } catch (Exception e) {
+                                System.out.println("新增温度告警记录失败" + e);
+                                ctx.close();
                             }
-                        }else{
+                        } else {
                             // 不符合结构
                             ctx.close();
                             return;
@@ -330,7 +441,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 //            } else {
 //                // 不符合结构
 ////                ctx.close();
-                return;
+            return;
 //            }
 
 

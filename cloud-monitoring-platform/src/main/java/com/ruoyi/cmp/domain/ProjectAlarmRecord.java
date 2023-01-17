@@ -37,9 +37,33 @@ public class ProjectAlarmRecord extends BaseEntity
     @Excel(name = "等级")
     private Long lev;
 
-    /** 是否已读 */
+
     @Excel(name = "告警信息")
     private String alarmInfo;
+
+    public Long getMid() {
+        return mid;
+    }
+
+    public void setMid(Long mid) {
+        this.mid = mid;
+    }
+
+    public String getMname() {
+        return mname;
+    }
+
+    public void setMname(String mname) {
+        this.mname = mname;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getIsDelete() {
         return isDelete;
@@ -51,8 +75,14 @@ public class ProjectAlarmRecord extends BaseEntity
 
     @Excel(name = "产生次数")
     private String prodNum;
-
+    //是否已读
     private String isDelete;
+    //测点id
+    private Long mid;
+    //测点名称
+    private String mname;
+    //类型 1 温度 2 位移
+    private String type;
 
     private Date createTime_start;
 

@@ -3,6 +3,7 @@ package com.ruoyi.cmp.utils;
 import com.ruoyi.cmp.domain.*;
 import com.ruoyi.cmp.mapper.*;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +55,7 @@ public class CreateAlarmRecordUtils {
      * 4.告警信息 展示: A测点 位移:100  温度 100
      * 5.产生次数: 比对阈值配置里面的数据,产生多少次异常直接累加
      */
-    public static String createAlarmRecordForSensor(ConfigureSensorData configureSensorData) {
+    public static String createAlarmRecordForTemp(ConfigureSensorData configureSensorData) {
         String returnMsg = "新增成功";
         ConfigureSensor configureSensor = createAlarmRecordUtils.configureSensorMapper.selectConfigureSensorById(configureSensorData.getSensorId());
         if (configureSensor == null) {
@@ -76,22 +77,126 @@ public class CreateAlarmRecordUtils {
         }
         if (measuringPoint == null) {
             return "测点为空";
-
         }
+        ProjectAlarmRecord projectAlarmRecordParam = new ProjectAlarmRecord();
+        //结构物,测点, 类型 确定唯一记录
+        projectAlarmRecordParam.setSid(structure.getId());
+        projectAlarmRecordParam.setMid(measuringPoint.getId());
+        projectAlarmRecordParam.setType("1"); //1 温度
+        int prodNum = 1;
         ProjectAlarmRecord projectAlarmRecord = new ProjectAlarmRecord();
+        List<ProjectAlarmRecord> projectAlarmRecords = createAlarmRecordUtils.projectAlarmRecordMapper.selectProjectAlarmRecordList(projectAlarmRecordParam);
+        if (projectAlarmRecords != null && projectAlarmRecords.size() > 0) {
+            projectAlarmRecord = projectAlarmRecords.get(0);
+        }
+        if (projectAlarmRecord != null && projectAlarmRecord.getId() != null) {
+            prodNum += Integer.parseInt(projectAlarmRecord.getProdNum());
+        }
         projectAlarmRecord.setSid(structure.getId());
         projectAlarmRecord.setSname(structure.getName());
         projectAlarmRecord.setAlarmSource("数据异常");
         String lev = createAlarmRecordUtils.getLev(configureSensorData, structure, configureSensor, measuringPoint);
         projectAlarmRecord.setLev(Long.parseLong(lev));
         String alarmInfoMsg = "";
-        alarmInfoMsg += "测点:" + measuringPoint.getMfName() + "温度:" + configureSensorData.getTempData() + "位移:" + configureSensorData.getDriftData();
+        alarmInfoMsg += "测点：" + measuringPoint.getMfName() + "  温度：" + configureSensorData.getTempData();
         projectAlarmRecord.setAlarmInfo(alarmInfoMsg);
         projectAlarmRecord.setIsDelete("0");
         projectAlarmRecord.setCreateTime(DateUtils.getNowDate());
         projectAlarmRecord.setProdDate(configureSensorData.getCreateTime());
-        projectAlarmRecord.setProdNum("1");
-        createAlarmRecordUtils.projectAlarmRecordMapper.insertProjectAlarmRecord(projectAlarmRecord);
+        projectAlarmRecord.setProdNum(prodNum + "");
+        projectAlarmRecord.setMid(measuringPoint.getId());
+        projectAlarmRecord.setMname(measuringPoint.getName());
+        projectAlarmRecord.setType("1");
+        if (projectAlarmRecord != null && projectAlarmRecord.getId() != null) {
+            createAlarmRecordUtils.projectAlarmRecordMapper.updateProjectAlarmRecord(projectAlarmRecord);
+        } else {
+            createAlarmRecordUtils.projectAlarmRecordMapper.insertProjectAlarmRecord(projectAlarmRecord);
+        }
+
+        return returnMsg;
+
+
+    }
+
+    /**
+     * 创建 位移告警信息
+     */
+    public static String createAlarmRecordForDisplacement(ConfigureSensorData configureSensorData) {
+        String returnMsg = "新增成功";
+        ConfigureSensor configureSensor = createAlarmRecordUtils.configureSensorMapper.selectConfigureSensorById(configureSensorData.getSensorId());
+        if (configureSensor == null) {
+            return "传感器对象为空";
+        }
+        Structure structure = createAlarmRecordUtils.structureMapper.selectStructureById(configureSensor.getBusinessId());
+        if (structure == null) {
+            return "结构物为空";
+        }
+        //根据结构物获取结构物下,基准测点信息
+        MeasuringPoint measuringPointParam = new MeasuringPoint();
+        measuringPointParam.setStructureId(structure.getId());
+        measuringPointParam.setLev(3L);
+        createAlarmRecordUtils.measuringPointMapper.selectMeasuringPointList(measuringPointParam);
+        List<MeasuringPoint> measuringPoints = createAlarmRecordUtils.measuringPointMapper.selectMeasuringPointList(measuringPointParam);
+        MeasuringPoint basePoint = new MeasuringPoint();
+        for (MeasuringPoint point : measuringPoints) {
+            if (StringUtils.isNotEmpty(point.getIsBenchmark()) && point.getIsBenchmark().equals("Y")) {
+                basePoint = point;
+                break;
+            }
+        }
+        //结构物,设备 确定唯一测点信息
+        measuringPointParam.setEquipmentId(configureSensor.getEquipmentId() + "");
+        measuringPoints = createAlarmRecordUtils.measuringPointMapper.selectMeasuringPointList(measuringPointParam);
+        MeasuringPoint measuringPoint = new MeasuringPoint();
+        if (measuringPoints != null) {
+            measuringPoint = measuringPoints.get(0);
+        }
+        if (measuringPoint == null) {
+            return "测点为空";
+        }
+        ProjectAlarmRecord projectAlarmRecordParam = new ProjectAlarmRecord();
+        //结构物,测点, 类型 确定唯一记录
+        projectAlarmRecordParam.setSid(structure.getId());
+        projectAlarmRecordParam.setMid(measuringPoint.getId());
+        projectAlarmRecordParam.setType("2"); //1 温度 2 位移
+        int prodNum = 1;
+        ProjectAlarmRecord projectAlarmRecord = new ProjectAlarmRecord();
+        List<ProjectAlarmRecord> projectAlarmRecords = createAlarmRecordUtils.projectAlarmRecordMapper.selectProjectAlarmRecordList(projectAlarmRecordParam);
+        if (projectAlarmRecords != null && projectAlarmRecords.size() > 0) {
+            projectAlarmRecord = projectAlarmRecords.get(0);
+        }
+        if (projectAlarmRecord != null && projectAlarmRecord.getId() != null) {
+            prodNum += Integer.parseInt(projectAlarmRecord.getProdNum());
+
+        }
+        projectAlarmRecord.setSid(structure.getId());
+        projectAlarmRecord.setSname(structure.getName());
+        projectAlarmRecord.setAlarmSource("数据异常");
+        String driftData = configureSensorData.getDriftData(); //位移值.比较差值
+        if (basePoint != null && basePoint.getBenchmarkValue() != null) { //基准点,位移值
+            Double v = Double.parseDouble(driftData) - basePoint.getBenchmarkValue();
+            configureSensorData.setDriftData(v + "");
+        }
+
+        String lev = createAlarmRecordUtils.getLev(configureSensorData, structure, configureSensor, measuringPoint);
+        projectAlarmRecord.setLev(Long.parseLong(lev));
+        String alarmInfoMsg = "";
+        alarmInfoMsg += "测点：" + measuringPoint.getMfName() + "  沉降位移值：" + configureSensorData.getDipSensorTemp() + " 倾角Y轴数据：" + configureSensorData.getDipX() +
+                " 倾角Y轴数据：" + configureSensorData.getDipY() + " 倾角Z轴数据：" + configureSensorData.getDipZ() + "  ";
+        projectAlarmRecord.setAlarmInfo(alarmInfoMsg);
+        projectAlarmRecord.setIsDelete("0");
+        projectAlarmRecord.setCreateTime(DateUtils.getNowDate());
+        projectAlarmRecord.setProdDate(configureSensorData.getCreateTime());
+        projectAlarmRecord.setProdNum(prodNum + "");
+        projectAlarmRecord.setMid(measuringPoint.getId());
+        projectAlarmRecord.setMname(measuringPoint.getName());
+        projectAlarmRecord.setType("2");
+        if (projectAlarmRecord != null && projectAlarmRecord.getId() != null) {
+            createAlarmRecordUtils.projectAlarmRecordMapper.updateProjectAlarmRecord(projectAlarmRecord);
+        } else {
+            createAlarmRecordUtils.projectAlarmRecordMapper.insertProjectAlarmRecord(projectAlarmRecord);
+        }
+
         return returnMsg;
 
 

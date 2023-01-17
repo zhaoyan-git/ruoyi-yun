@@ -17,6 +17,9 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="isDelete"/>
+        <result property="mid" column="mid"/>
+        <result property="mname" column="mname"/>
+        <result property="type" column="type"/>
     </resultMap>
 
     <sql id="selectProjectAlarmRecordVo">
@@ -28,7 +31,7 @@
                create_time,
                update_time,
                alarmInfo,
-               prodNum,prodDate,updateDate,isDelete
+               prodNum,prodDate,updateDate,isDelete,mid,mname,type
         from project_alarm_record
     </sql>
 
@@ -50,6 +53,9 @@
             <if test="createTime_start != null">and  prodDate >= #{createTime_start}</if>
             <if test="createTime_end != null">and  prodDate &lt;= #{createTime_end}</if>
             <if test="isDelete != null">and  isDelete = #{isDelete}</if>
+            <if test="mid != null">and  mid = #{mid}</if>
+            <if test="mname != null">and  mname = #{mname}</if>
+            <if test="type != null">and  type = #{type}</if>
         </where>
     </select>
 
@@ -72,34 +78,45 @@
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDelete != null">isDelete,</if>
+            <if test="mid != null">mid,</if>
+            <if test="mname != null">mname,</if>
+            <if test="type != null">type,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sid != null">#{sid},</if>
             <if test="sname != null">#{sname},</if>
             <if test="alarmSource != null">#{alarmSource},</if>
             <if test="lev != null">#{lev},</if>
+            <if test="alarmInfo != null">#{alarmInfo},</if>
             <if test="prodNum != null">#{prodNum},</if>
             <if test="prodDate != null">#{prodDate},</if>
             <if test="updateDate != null">#{updateDate},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDelete != null">#{isDelete},</if>
+            <if test="mid != null">#{mid},</if>
+            <if test="mname != null">#{mname},</if>
+            <if test="type != null">#{type},</if>
         </trim>
     </insert>
 
     <update id="updateProjectAlarmRecord" parameterType="ProjectAlarmRecord">
         update project_alarm_record
         <trim prefix="SET" suffixOverrides=",">
-            <if test="sid != null">sid = #{title},</if>
+            <if test="sid != null">sid = #{sid},</if>
             <if test="sname != null">sname = #{sname},</if>
             <if test="alarmSource != null">alarmSource = #{alarmSource},</if>
             <if test="lev != null">lev = #{lev},</if>
+            <if test="alarmInfo != null">alarmInfo = #{alarmInfo},</if>
             <if test="prodNum != null">prodNum = #{prodNum},</if>
             <if test="prodDate != null">prodDate = #{prodDate},</if>
             <if test="updateDate != null">updateDate = #{updateDate},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="isDelete != null">isDelete = #{isDelete},</if>
+            <if test="mid != null">mid = #{mid},</if>
+            <if test="mname != null">mname = #{mname},</if>
+            <if test="type != null">type = #{type},</if>
         </trim>
         where id = #{id}
     </update>

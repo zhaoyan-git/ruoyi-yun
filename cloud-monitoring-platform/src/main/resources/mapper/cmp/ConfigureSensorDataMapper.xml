@@ -11,10 +11,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tempData"    column="temp_data"    />
         <result property="driftData"    column="drift_data"    />
         <result property="createTime"    column="create_time"    />
+        <result property="dipX"    column="dip_x"    />
+        <result property="dipY"    column="dip_y"    />
+        <result property="dipZ"    column="dip_z"    />
+        <result property="dipSensorTemp"    column="dip_sensor_temp"    />
+        <result property="vibrationX"    column="vibration_x"    />
+        <result property="vibrationY"    column="vibration_y"    />
+        <result property="vibrationZ"    column="vibration_z"    />
+        <result property="subsideDispValue"    column="subside_disp_value"    />
     </resultMap>
 
     <sql id="selectConfigureSensorDataVo">
-        select id, sensor_id, original_data, temp_data, drift_data, create_time from configure_sensor_data
+        select id, sensor_id, original_data, temp_data, drift_data, create_time, dip_x,  dip_y,dip_z, dip_sensor_temp,vibration_x,vibration_y,vibration_z, subside_disp_value from configure_sensor_data
     </sql>
 
     <select id="selectConfigureSensorDataList" parameterType="ConfigureSensorData" resultMap="ConfigureSensorDataResult">
@@ -41,6 +49,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tempData != null">temp_data,</if>
             <if test="driftData != null">drift_data,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="dipX != null">dip_x,</if>
+            <if test="dipY != null">dip_y,</if>
+            <if test="dipZ != null">dip_z,</if>
+            <if test="dipSensorTemp != null">dip_sensor_temp,</if>
+            <if test="vibrationX != null">vibration_x,</if>
+            <if test="vibrationY != null">vibration_y,</if>
+            <if test="vibrationZ != null">vibration_z,</if>
+            <if test="subsideDispValue != null">subside_disp_value,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -49,6 +65,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tempData != null">#{tempData},</if>
             <if test="driftData != null">#{driftData},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="dipX != null">#{dipX},</if>
+            <if test="dipY != null">#{dipY},</if>
+            <if test="dipZ != null">#{dipZ},</if>
+            <if test="dipSensorTemp != null">#{dipSensorTemp},</if>
+            <if test="vibrationX != null">#{vibrationX},</if>
+            <if test="vibrationY != null">#{vibrationY},</if>
+            <if test="vibrationZ != null">#{vibrationZ},</if>
+            <if test="subsideDispValue != null">#{subsideDispValue},</if>
          </trim>
     </insert>
 
@@ -60,6 +84,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tempData != null">temp_data = #{tempData},</if>
             <if test="driftData != null">drift_data = #{driftData},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="dipX != null">dip_x = #{dipX},</if>
+            <if test="dipY != null">dip_y = #{dipY},</if>
+            <if test="dipZ != null">dip_z = #{dipZ},</if>
+            <if test="dipSensorTemp != null">dip_sensor_temp = #{dipSensorTemp},</if>
+            <if test="vibrationX != null">vibration_x = #{vibrationX},</if>
+            <if test="vibrationY != null">vibration_y = #{vibrationY},</if>
+            <if test="vibrationZ != null">vibration_z = #{vibrationZ},</if>
+            <if test="subsideDispValue != null">subside_disp_value = #{subsideDispValue},</if>
         </trim>
         where id = #{id}
     </update>
