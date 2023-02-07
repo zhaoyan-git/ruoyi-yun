@@ -19,10 +19,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="vibrationY"    column="vibration_y"    />
         <result property="vibrationZ"    column="vibration_z"    />
         <result property="subsideDispValue"    column="subside_disp_value"    />
+        <result property="dtuId"    column="dtu_Id"    />
     </resultMap>
 
     <sql id="selectConfigureSensorDataVo">
-        select id, sensor_id, original_data, temp_data, drift_data, create_time, dip_x,  dip_y,dip_z, dip_sensor_temp,vibration_x,vibration_y,vibration_z, subside_disp_value from configure_sensor_data
+        select id, sensor_id, dtu_Id,original_data, temp_data, drift_data, create_time, dip_x,  dip_y,dip_z, dip_sensor_temp,vibration_x,vibration_y,vibration_z, subside_disp_value from configure_sensor_data
     </sql>
 
     <select id="selectConfigureSensorDataList" parameterType="ConfigureSensorData" resultMap="ConfigureSensorDataResult">
@@ -32,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="originalData != null  and originalData != ''"> and original_data = #{originalData}</if>
             <if test="tempData != null  and tempData != ''"> and temp_data = #{tempData}</if>
             <if test="driftData != null  and driftData != ''"> and drift_data = #{driftData}</if>
+            <if test="dtuId != null  and dtuId != ''"> and dtu_Id = #{dtuId}</if>
         </where>
     </select>
     
@@ -57,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vibrationY != null">vibration_y,</if>
             <if test="vibrationZ != null">vibration_z,</if>
             <if test="subsideDispValue != null">subside_disp_value,</if>
+            <if test="dtuId != null">dtu_Id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -73,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vibrationY != null">#{vibrationY},</if>
             <if test="vibrationZ != null">#{vibrationZ},</if>
             <if test="subsideDispValue != null">#{subsideDispValue},</if>
+            <if test="dtuId != null">#{dtuId},</if>
          </trim>
     </insert>
 
@@ -92,6 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vibrationY != null">vibration_y = #{vibrationY},</if>
             <if test="vibrationZ != null">vibration_z = #{vibrationZ},</if>
             <if test="subsideDispValue != null">subside_disp_value = #{subsideDispValue},</if>
+            <if test="dtuId != null">dtu_Id = #{dtuId},</if>
         </trim>
         where id = #{id}
     </update>

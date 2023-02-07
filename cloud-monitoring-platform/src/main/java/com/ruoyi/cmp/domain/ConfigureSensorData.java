@@ -37,11 +37,21 @@ public class ConfigureSensorData extends BaseEntity {
     @Excel(name = "温度数据")
     private String tempData;
 
+    public Long getDtuId() {
+        return dtuId;
+    }
+
+    public void setDtuId(Long dtuId) {
+        this.dtuId = dtuId;
+    }
+
     /**
      * 位移数据
      */
     @Excel(name = "位移数据")
     private String driftData;
+
+    private Long dtuId;
 
     public void setId(Long id) {
         this.id = id;

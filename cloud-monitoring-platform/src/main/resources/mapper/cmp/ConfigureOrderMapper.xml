@@ -17,10 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="slaveAddress"    column="slave_address"    />
     </resultMap>
 
     <sql id="selectConfigureOrderVo">
-        select id, sensor_id, order_type, address_hi, address_lo, amount_hi, amount_lo, cycle_time, create_by, create_time, update_by, update_time from configure_order
+        select id, sensor_id, slave_address,order_type, address_hi, address_lo, amount_hi, amount_lo, cycle_time, create_by, create_time, update_by, update_time from configure_order
     </sql>
 
     <select id="selectConfigureOrderList" parameterType="ConfigureOrder" resultMap="ConfigureOrderResult">
@@ -28,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="sensorId != null "> and sensor_id = #{sensorId}</if>
             <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="slaveAddress != null  and slaveAddress != ''"> and slave_address = #{slaveAddress}</if>
             <if test="addressHi != null  and addressHi != ''"> and address_hi = #{addressHi}</if>
             <if test="addressLo != null  and addressLo != ''"> and address_lo = #{addressLo}</if>
             <if test="amountHi != null  and amountHi != ''"> and amount_hi = #{amountHi}</if>
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="slaveAddress != null">slave_address,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -70,8 +73,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="slaveAddress != null">#{slaveAddress},</if>
          </trim>
     </insert>
+
 
     <update id="updateConfigureOrder" parameterType="ConfigureOrder">
         update configure_order
@@ -87,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="slaveAddress != null">slave_address = #{slaveAddress},</if>
         </trim>
         where id = #{id}
     </update>
