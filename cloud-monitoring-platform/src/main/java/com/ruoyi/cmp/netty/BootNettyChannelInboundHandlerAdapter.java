@@ -62,6 +62,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         System.out.println("收到：" + HexUtil.bytes2HexString(msgByte)); //字节转换成16进制
         System.out.println("收到：" + HexUtil.byteToHex(msgByte));
         // 获取IP
+        RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
 
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
@@ -238,16 +239,38 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         }
         // DTU 心跳包
         else if (1 == msgByte.length) {
-//            if ("fe".equals(HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1)))) {
-//                IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
-//                IWxcxcDeviceService wxcxcDeviceService = (IWxcxcDeviceService) SpringContextUtil.getBean(IWxcxcDeviceService.class);
-//                IWxcxcDeviceSensorService wxcxcDeviceSensorService = (IWxcxcDeviceSensorService) SpringContextUtil.getBean(IWxcxcDeviceSensorService.class);
-//
-//                // 根据Ip获取DTU
-//                WxcxcDeviceGateway wxcxcDeviceGateway = getDeviceGatewayByIp(clientIp);
-//                wxcxcDeviceGateway.setOnlineFlag("1");
-//                wxcxcDeviceGatewayService.updateWxcxcDeviceGateway(wxcxcDeviceGateway);
-//
+            //收到心跳包更新心跳状态
+            if ("fe".equals(HexUtil.byteToHex(Arrays.copyOfRange(msgByte, 0, 1)))) {
+                IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+
+                // 根据Ip获取DTU
+                DeviceGateway deviceGatewayCondition = new DeviceGateway();
+                deviceGatewayCondition.setIp(clientIp);
+                List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+                if (null != deviceGatewayList) {
+                    DeviceGateway deviceGateway = null;
+
+                    for (DeviceGateway item : deviceGatewayList) {
+                        deviceGateway = item;
+                    }
+
+                    if (null != deviceGateway) {
+                        deviceGateway.setOnlineFlag("1");
+                        deviceGatewayService.updateDeviceGateway(deviceGateway);
+                        //保存通道id key dtuid value 通道id
+                        redisCache.setCacheObject(deviceGateway.getDtuId(),ctx.channel().id());
+                        return;
+                    } else {
+                        // 不符合结构
+                        ctx.close();
+                        return;
+                    }
+                } else {
+                    // 不符合结构
+                    ctx.close();
+                    return;
+                }
+
 //                // 查询该DTU下连接的全部设备
 //                WxcxcDevice wxcxcDeviceCondition = new WxcxcDevice();
 //                wxcxcDeviceCondition.setGatewayId(wxcxcDeviceGateway.getId());
@@ -293,7 +316,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 //                        return;
 //                    }
 //                }
-//            }
+            }
         } else {
             System.out.println("read:" + HexUtil.byteToHex(msgByte));
             // 接收
