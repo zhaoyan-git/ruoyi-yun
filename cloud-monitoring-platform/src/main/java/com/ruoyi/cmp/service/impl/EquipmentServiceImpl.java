@@ -6,6 +6,7 @@ import com.ruoyi.cmp.domain.Equipment;
 import com.ruoyi.cmp.mapper.EquipmentMapper;
 import com.ruoyi.cmp.service.IEquipmentService;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,7 @@ public class EquipmentServiceImpl implements IEquipmentService {
     @Transactional(rollbackFor = Exception.class)
     public int insertEquipment(Equipment equipment) {
         equipment.setCreateTime(DateUtils.getNowDate());
+        equipment.setCreateBy(SecurityUtils.getUserId() + "");
         return equipmentMapper.insertEquipment(equipment);
     }
 
@@ -65,10 +67,11 @@ public class EquipmentServiceImpl implements IEquipmentService {
     @Transactional(rollbackFor = Exception.class)
     public int updateEquipment(Equipment equipment) {
         equipment.setUpdateTime(DateUtils.getNowDate());
+        equipment.setUpdateBy(SecurityUtils.getUserId() + "");
         return equipmentMapper.updateEquipment(equipment);
     }
 
-   @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public int deleteStructureForEquipment(Equipment equipment) {
         return this.equipmentMapper.deleteStructureForEquipment(equipment);
     }

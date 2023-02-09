@@ -19,15 +19,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="transmissionDelay"    column="transmission_delay"    />
         <result property="receivedPacket"    column="received_packet"    />
         <result property="streamLog"    column="stream_log"    />
+        <result property="groupPackage"    column="groupPackage"    />
         <result property="remark"    column="remark"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="deptName"    column="dept_name"    />
     </resultMap>
 
     <sql id="selectConfigureDtuVo">
-        select id, manufacturer, product, model, name, business_id, sim, dtu_no, crc, equipment_id, page_size, transmission_delay, received_packet, stream_log, remark, create_by, create_time, update_by, update_time from configure_dtu
+        select cd.id, cd.manufacturer, cd.groupPackage,cd.product, cd.model, cd.name, cd.business_id, cd.sim, cd.dtu_no, cd.crc, cd.equipment_id, cd.page_size,
+               cd.transmission_delay, cd.received_packet,
+               cd.stream_log, cd.remark, cd.create_by, cd.create_time, cd.update_by, cd.update_time , sd.dept_name
+        from configure_dtu cd
+        left join sys_dept sd on cd.manufacturer = sd.dept_id
     </sql>
 
     <select id="selectConfigureDtuList" parameterType="ConfigureDtu" resultMap="ConfigureDtuResult">
@@ -37,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="product != null  and product != ''"> and product = #{product}</if>
             <if test="model != null  and model != ''"> and model = #{model}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="businessId != null "> and business_id = #{businessId}</if>
+            <if test="businessId != null and businessId != ''"> and business_id = #{businessId}</if>
             <if test="sim != null  and sim != ''"> and sim = #{sim}</if>
             <if test="dtuNo != null  and dtuNo != ''"> and dtu_no = #{dtuNo}</if>
             <if test="crc != null  and crc != ''"> and crc = #{crc}</if>
@@ -46,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="transmissionDelay != null  and transmissionDelay != ''"> and transmission_delay = #{transmissionDelay}</if>
             <if test="receivedPacket != null  and receivedPacket != ''"> and received_packet = #{receivedPacket}</if>
             <if test="streamLog != null  and streamLog != ''"> and stream_log = #{streamLog}</if>
+            <if test="groupPackage != null  and groupPackage != ''"> and groupPackage = #{groupPackage}</if>
         </where>
     </select>
     
@@ -75,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="groupPackage != null">groupPackage,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="manufacturer != null">#{manufacturer},</if>
@@ -95,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="groupPackage != null">#{groupPackage},</if>
          </trim>
     </insert>
 
@@ -119,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="groupPackage != null">groupPackage = #{groupPackage},</if>
         </trim>
         where id = #{id}
     </update>

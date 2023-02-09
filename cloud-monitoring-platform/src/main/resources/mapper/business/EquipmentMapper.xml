@@ -6,12 +6,10 @@
 
     <resultMap type="Equipment" id="EquipmentResult">
         <result property="id" column="id"/>
-        <result property="name" column="name"/>
         <result property="businessId" column="business_id"/>
         <result property="model" column="model"/>
         <result property="manufacturer" column="manufacturer"/>
-        <result property="equipmentId" column="equipment_id"/>
-        <result property="sim" column="sim"/>
+        <result property="product" column="product"/>
         <result property="remark" column="remark"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
@@ -22,12 +20,10 @@
 
     <sql id="selectEquipmentVo">
         select e.id,
-               e.name,
                e.business_id,
                e.model,
                e.manufacturer,
-               e.equipment_id,
-               e.sim,
+               e.product,
                e.remark,
                e.create_by,
                e.create_time,
@@ -41,12 +37,10 @@
     <select id="selectEquipmentList" parameterType="Equipment" resultMap="EquipmentResult">
         <include refid="selectEquipmentVo"/>
         <where>
-            <if test="name != null  and name != ''">and e.name like concat('%', #{name}, '%')</if>
             <if test="businessId != null ">and e.business_id = #{businessId}</if>
             <if test="model != null  and model != ''">and e.model = #{model}</if>
             <if test="manufacturer != null  and manufacturer != ''">and e.manufacturer = #{manufacturer}</if>
-            <if test="equipmentId != null  and equipmentId != ''">and e.equipment_id = #{equipmentId}</if>
-            <if test="sim != null  and sim != ''">and e.sim = #{sim}</if>
+            <if test="product != null  and product != ''">and e.product = #{product}</if>
             <if test="businessIdIsNull != null  and businessIdIsNull == 1">and e.business_id is  null </if>
         </where>
     </select>
@@ -59,12 +53,10 @@
     <insert id="insertEquipment" parameterType="Equipment" useGeneratedKeys="true" keyProperty="id">
         insert into equipment
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="name != null">name,</if>
             <if test="businessId != null">business_id,</if>
             <if test="model != null">model,</if>
             <if test="manufacturer != null">manufacturer,</if>
-            <if test="equipmentId != null">equipment_id,</if>
-            <if test="sim != null">sim,</if>
+            <if test="product != null">product,</if>
             <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -72,12 +64,10 @@
             <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="name != null">#{name},</if>
             <if test="businessId != null">#{businessId},</if>
             <if test="model != null">#{model},</if>
             <if test="manufacturer != null">#{manufacturer},</if>
-            <if test="equipmentId != null">#{equipmentId},</if>
-            <if test="sim != null">#{sim},</if>
+            <if test="product != null">#{product},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -89,12 +79,10 @@
     <update id="updateEquipment" parameterType="Equipment">
         update equipment
         <trim prefix="SET" suffixOverrides=",">
-            <if test="name != null">name = #{name},</if>
             <if test="businessId != null">business_id = #{businessId},</if>
             <if test="model != null">model = #{model},</if>
             <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
-            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
-            <if test="sim != null">sim = #{sim},</if>
+            <if test="product != null">product = #{product},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

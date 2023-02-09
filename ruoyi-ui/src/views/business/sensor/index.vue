@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="厂商" prop="deptId">
-        <el-input
-          v-model="queryParams.deptId"
-          placeholder="请输入厂商"
-          clearable
-          @keyup.enter.native="handleQuery"
+      <el-form-item label="厂商" class="formColumnClassForDTU" prop="deptId">
+        <treeselect
+          v-model="form.deptId"
+          style="width: 250px;"
+          :options="deptOptions"
+          placeholder="请选择企业"
+          :show-count="true"
         />
       </el-form-item>
       <el-form-item label="设备id" prop="businessId">
@@ -277,7 +278,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      //部门树选项
+      deptOptions: undefined,
     };
   },
   created() {

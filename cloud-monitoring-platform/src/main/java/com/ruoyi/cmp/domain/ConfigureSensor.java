@@ -31,10 +31,20 @@ public class ConfigureSensor extends BaseEntity
     }
 
 
+    public Long getDtuId() {
+        return dtuId;
+    }
+
+    public void setDtuId(Long dtuId) {
+        this.dtuId = dtuId;
+    }
+
     @Excel(name = "结构物Id")
     private Long businessId;
     /** 设备id */
     private Long equipmentId;
+
+    private Long dtuId;
 
     public Long getEquipmentId() {
         return equipmentId;
@@ -51,6 +61,15 @@ public class ConfigureSensor extends BaseEntity
     /** 型号 */
     @Excel(name = "型号")
     private String model;
+    private String deptName;
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
 
     /** 模块号 */
     @Excel(name = "模块号")

@@ -14,29 +14,22 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class ConfigureDtu extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * $column.columnComment
-     */
     private Long id;
-
     /**
      * 厂商
      */
     @Excel(name = "厂商")
     private Long manufacturer;
-
     /**
      * 产品
      */
     @Excel(name = "产品")
     private String product;
-
     /**
      * 型号
      */
     @Excel(name = "型号")
     private String model;
-
     /**
      * 名称
      */
@@ -107,11 +100,31 @@ public class ConfigureDtu extends BaseEntity {
     @Excel(name = "同步接收包组时间")
     private String receivedPacket;
 
+    public boolean isGroupPackage() {
+        return groupPackage;
+    }
+
+    public void setGroupPackage(boolean groupPackage) {
+        this.groupPackage = groupPackage;
+    }
+
     /**
      * 码流日志
      */
     @Excel(name = "码流日志")
     private boolean streamLog;
+    @Excel(name = "组包")
+    private boolean groupPackage;
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    private String deptName;
 
     public void setId(Long id) {
         this.id = id;
@@ -227,7 +240,6 @@ public class ConfigureDtu extends BaseEntity {
                 .append("pageSize", getPageSize())
                 .append("transmissionDelay", getTransmissionDelay())
                 .append("receivedPacket", getReceivedPacket())
-
                 .append("remark", getRemark())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())

@@ -47,6 +47,16 @@ public class ConfigureDtuController extends BaseController {
     }
 
     /**
+     * 查询【请填写功能名称】列表
+     */
+    @PreAuthorize("@ss.hasPermi('business:dtu:list')")
+    @GetMapping("/notPageList")
+    public TableDataInfo notPageList(ConfigureDtu configureDtu) {
+        List<ConfigureDtu> list = configureDtuService.selectConfigureDtuList(configureDtu);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出【请填写功能名称】列表
      */
     @PreAuthorize("@ss.hasPermi('business:dtu:export')")

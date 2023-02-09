@@ -9,6 +9,14 @@ export function listDtu(query) {
   })
 }
 
+export function notPagelistDtu(query) {
+  return request({
+    url: '/business/dtu/notPageList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询【请填写功能名称】详细
 export function getDtu(id) {
   return request({

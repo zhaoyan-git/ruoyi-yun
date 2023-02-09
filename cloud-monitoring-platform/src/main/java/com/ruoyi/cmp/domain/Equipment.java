@@ -19,11 +19,6 @@ public class Equipment extends BaseEntity {
      */
     private Long id;
 
-    /**
-     * 设备名称
-     */
-    @Excel(name = "设备名称")
-    private String name;
 
     public String getIsPage() {
         return isPage;
@@ -55,7 +50,17 @@ public class Equipment extends BaseEntity {
     @Excel(name = "型号")
     private String model;
 
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
     private String businessIdIsNull;
+    //产品
+    private String product;
 
     /**
      * 厂商
@@ -71,19 +76,10 @@ public class Equipment extends BaseEntity {
         this.deptName = deptName;
     }
 
-    /**
-     * 设备ID号
-     */
-    @Excel(name = "设备ID号")
-    private String equipmentId;
 
     private String deptName;
 
-    /**
-     * SIM卡号
-     */
-    @Excel(name = "SIM卡号")
-    private String sim;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -93,13 +89,7 @@ public class Equipment extends BaseEntity {
         return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getName() {
-        return name;
-    }
 
     public void setBusinessId(Long businessId) {
         this.businessId = businessId;
@@ -126,32 +116,16 @@ public class Equipment extends BaseEntity {
     }
 
 
-    public void setEquipmentId(String equipmentId) {
-        this.equipmentId = equipmentId;
-    }
 
-    public String getEquipmentId() {
-        return equipmentId;
-    }
 
-    public void setSim(String sim) {
-        this.sim = sim;
-    }
-
-    public String getSim() {
-        return sim;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId())
-                .append("name", getName())
                 .append("businessId", getBusinessId())
                 .append("model", getModel())
                 .append("manufacturer", getManufacturer())
-                .append("equipmentId", getEquipmentId())
-                .append("sim", getSim())
                 .append("remark", getRemark())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())

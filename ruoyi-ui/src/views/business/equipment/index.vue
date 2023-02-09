@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="型号" prop="model">
-        <el-input
-          v-model="queryParams.model"
-          placeholder="请输入型号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="厂商" prop="manufacturer">
         <treeselect
           v-model="queryParams.manufacturer"
@@ -18,18 +10,18 @@
           :show-count="true"
         />
       </el-form-item>
-      <el-form-item label="设备ID号" prop="equipmentId">
+      <el-form-item label="产品" prop="product">
         <el-input
-          v-model="queryParams.equipmentId"
-          placeholder="请输入设备ID号"
+          v-model="queryParams.product"
+          placeholder="请输入产品"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="SIM卡号" prop="sim">
+      <el-form-item label="型号" prop="model">
         <el-input
-          v-model="queryParams.sim"
-          placeholder="请输入SIM卡号"
+          v-model="queryParams.model"
+          placeholder="请输入型号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -49,7 +41,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['business:equipment:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -60,7 +53,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['business:equipment:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -71,29 +65,18 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['business:equipment:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
-<!--      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['business:equipment:export']"
-        >导出</el-button>
-      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备名称" align="center" prop="name" />
-      <el-table-column label="型号" align="center" prop="model" />
-      <el-table-column label="厂商" align="center" prop="deptName" />
-      <el-table-column label="设备ID号" align="center" prop="equipmentId" />
-      <el-table-column label="SIM卡号" align="center" prop="sim" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="厂商" align="center" prop="deptName"/>
+      <el-table-column label="产品" align="center" prop="product"/>
+      <el-table-column label="型号" align="center" prop="model"/>
+      <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -102,14 +85,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:equipment:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:equipment:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -125,12 +110,6 @@
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="设备名称" prop="name">
-          <el-input maxlength="100" show-word-limit v-model="form.name"  placeholder="请输入设备名称" />
-        </el-form-item>
-        <el-form-item label="型号" prop="model">
-          <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号" />
-        </el-form-item>
         <el-form-item label="厂商" prop="manufacturer">
           <treeselect
             v-model="form.manufacturer"
@@ -139,14 +118,14 @@
             placeholder="选择所属企业"
           />
         </el-form-item>
-        <el-form-item label="设备ID号" prop="equipmentId">
-          <el-input maxlength="100" show-word-limit v-model="form.equipmentId" placeholder="请输入设备ID号" />
+        <el-form-item label="产品" prop="model">
+          <el-input maxlength="100" show-word-limit v-model="form.product" placeholder="请输入产品"/>
         </el-form-item>
-        <el-form-item label="SIM卡号" prop="sim">
-          <el-input maxlength="100" show-word-limit v-model="form.sim" placeholder="请输入SIM卡号" />
+        <el-form-item label="型号" prop="model">
+          <el-input maxlength="100" show-word-limit v-model="form.model" placeholder="请输入型号"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input maxlength="200" show-word-limit v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -158,13 +137,14 @@
 </template>
 
 <script>
-import { listEquipment, getEquipment, delEquipment, addEquipment, updateEquipment } from "@/api/business/equipment";
-import { getTreeselectList } from "@/api/system/dept";
+import {listEquipment, getEquipment, delEquipment, addEquipment, updateEquipment} from "@/api/business/equipment";
+import {getTreeselectList} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
 export default {
   name: "Equipment",
-  components:{Treeselect},
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -193,16 +173,14 @@ export default {
         businessId: null,
         model: null,
         manufacturer: null,
-        equipmentId: null,
-        sim: null,
+        product: null,
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       //部门树选项
-      deptOptions : undefined,
+      deptOptions: undefined,
     };
   },
   created() {
@@ -232,8 +210,7 @@ export default {
         businessId: null,
         model: null,
         manufacturer: null,
-        equipmentId: null,
-        sim: null,
+        product: null,
         remark: null,
         createBy: null,
         createTime: null,
@@ -255,7 +232,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -297,12 +274,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除设备编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除设备编号为"' + ids + '"的数据项？').then(function () {
         return delEquipment(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -310,10 +288,10 @@ export default {
         ...this.queryParams
       }, `equipment_${new Date().getTime()}.xlsx`)
     },
-    getTreeselect(){
+    getTreeselect() {
       var queryForm = {};
       queryForm.type = '2';
-      getTreeselectList(queryForm).then(response =>{
+      getTreeselectList(queryForm).then(response => {
         this.deptOptions = response.data;
       });
     },

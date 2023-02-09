@@ -23,10 +23,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="dtuId"    column="dtu_id"    />
+        <result property="deptName"    column="dept_name"    />
     </resultMap>
 
     <sql id="selectConfigureSensorVo">
-        select id, dept_id, business_id,equipment_id, product, model, module_no, channel_no, no, formula, expression, batchAdd, batchAddValue, remark, create_by, create_time, update_by, update_time from configure_sensor
+        select cs.id, cs.dept_id, cs.dtu_id,cs.business_id,cs.equipment_id, cs.product, cs.model, cs.module_no, cs.channel_no, cs.no,
+               cs.formula, cs.expression, cs.batchAdd, cs.batchAddValue, cs.remark, cs.create_by, cs.create_time, cs.update_by, cs.update_time ,sd.dept_name
+        from configure_sensor cs
+        left join sys_dept sd on cs.dept_id = sd.dept_id
     </sql>
 
     <select id="selectConfigureSensorList" parameterType="ConfigureSensor" resultMap="ConfigureSensorResult">
@@ -44,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="expression != null  and expression != ''"> and expression = #{expression}</if>
             <if test="batchadd != null  and batchadd != ''"> and batchAdd = #{batchadd}</if>
             <if test="batchaddvalue != null "> and batchAddValue = #{batchaddvalue}</if>
+            <if test="dtuId != null "> and dtu_Id = #{dtuId}</if>
         </where>
     </select>
     
@@ -72,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="equipmentId != null">equipment_id,</if>
+            <if test="dtuId != null">dtu_Id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deptId != null">#{deptId},</if>
@@ -91,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="dtuId != null">#{dtuId},</if>
          </trim>
     </insert>
 
@@ -114,6 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="dtuId != null">dtu_Id = #{dtuId},</if>
         </trim>
         where id = #{id}
     </update>

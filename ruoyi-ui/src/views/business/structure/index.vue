@@ -273,20 +273,29 @@
                           <el-button
                             size="mini"
                             type="text"
-                            @click="collectionStrategy(scope.row)"
+                            @click="updateEquipmentFun(scope.row)"
                             v-hasPermi="['business:structure:edit']"
-                          >采集策略
+                          >编辑
                           </el-button>
                         </el-dropdown-item>
                         <el-dropdown-item>
                           <el-button
                             size="mini"
                             type="text"
-                            @click="configureDTU(scope.row)"
+                            @click="collectionStrategy(scope.row)"
                             v-hasPermi="['business:structure:edit']"
-                          >配置DTU
+                          >采集策略
                           </el-button>
                         </el-dropdown-item>
+<!--                        <el-dropdown-item>-->
+<!--                          <el-button-->
+<!--                            size="mini"-->
+<!--                            type="text"-->
+<!--                            @click="configureDTU(scope.row)"-->
+<!--                            v-hasPermi="['business:structure:edit']"-->
+<!--                          >配置DTU-->
+<!--                          </el-button>-->
+<!--                        </el-dropdown-item>-->
 <!--                        <el-dropdown-item>
                           <el-button
                             size="mini"
@@ -353,7 +362,7 @@
 
     <!--设备列表-->
     <el-dialog :title="equipment.title" :visible.sync="equipment.open"  v-if="equipment.open"  width="1000px" append-to-body>
-      <EquipmentList ref="equipmentList" :selectIds="equipment.selectIds" :sid="equipment.sid" @ok="equipmentForOkFun"></EquipmentList>
+      <EquipmentList ref="equipmentList"  :sid="equipment.sid" :id="equipment.id" @ok="equipmentForOkFun"></EquipmentList>
     </el-dialog>
     <!--采集策略-->
     <el-dialog :title="strategy.title" :visible.sync="strategy.open" width="700px" append-to-body>
@@ -364,8 +373,8 @@
       <CollectorForm ref="collectorForm" :sid="collector.sid" :equipmentId="collector.equipmentId"  @ok="collectorForOkFun"></CollectorForm>
     </el-dialog>
     <!--传感器-->
-    <el-dialog :title="sensor.title" :visible.sync="sensor.open" width="700px" append-to-body>
-      <SensorForm ref="sensorForm" :sid="sensor.sid" :equipmentId="sensor.equipmentId" @ok="sensorForOkFun"></SensorForm>
+    <el-dialog :title="sensor.title" :visible.sync="sensor.open" v-if="sensor.open" append-to-body>
+      <SensorForm ref="sensorForm" :sid="sensor.sid" :dtuId="sensor.dtuId" @ok="sensorForOkFun"></SensorForm>
     </el-dialog>
     <!--DTU-->
     <el-dialog :title="dtu.title" :visible.sync="dtu.open"   append-to-body>
@@ -388,6 +397,7 @@ import ImagePreview from "@/components/ImagePreview/index"; /*图片展示*/
 import Treeselect from "@riophae/vue-treeselect"; /*机构树*/
 /*调用js方法*/
 import {listEquipmentNotPage, deleteStructureForEquipmentFun} from "@/api/business/equipment";
+import { notPagelistDtu } from "@/api/business/dtu";
 import {
   listStructure,
   getStructure,
@@ -437,8 +447,6 @@ export default {
       open: false,
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
         name: null,
         typeId: null,
         photoFile: null,
@@ -465,7 +473,8 @@ export default {
         title: '',
         equipmentList: [], //设备表格数据
         selectIds: [],
-        sid:'',
+        sid:null,
+        id:null,
       },
       //采集策略对象
       strategy: {
@@ -485,7 +494,7 @@ export default {
         open: false,
         title: '',
         sid: '',
-        equipmentId: '',
+        dtuId: '',
       },
       dtu: {
         open: false,
@@ -693,7 +702,7 @@ export default {
       this.sensor.open = true;
       this.sensor.title = "配置传感器";
       this.sensor.sid = row.businessId;
-      this.sensor.equipmentId = row.id;
+      this.sensor.dtuId = row.id;
     },
     //采集仪回调方法
     sensorForOkFun() {
@@ -709,19 +718,29 @@ export default {
     //获取结构物关联的设备列表
     getEquipmentListByStructureIdFun() {
       this.queryParams.businessId = this.rowDOM.id;
-      listEquipmentNotPage(this.queryParams).then(response => {
+      notPagelistDtu(this.queryParams).then(response => {
         this.equipment.equipmentList = response.rows;
       });
     },
     //设备组网,新增设备
     addEquipmentFun() {
-      this.equipment.title = "请选择设备";
+      this.equipment.title = "新增设备";
       this.equipment.open = true;
+      this.equipment.sid = this.rowDOM.id;
+      this.equipment.id = null;
+    },
+    //设备组网,修改设备
+    updateEquipmentFun(row) {
+      this.equipment.title = "新增设备";
+      this.equipment.open = true;
+      this.equipment.sid = this.rowDOM.id;
+      this.equipment.id = row.id;
     },
     //设备选择回调方法
-    equipmentForOkFun(array) {
-      this.equipment.equipmentList = array;
+    equipmentForOkFun() {
+      this.getEquipmentListByStructureIdFun();
       this.equipment.open = false;
+
     },
     submitMFFun() {
       this.cdForm.id = this.rowDOM.id;
