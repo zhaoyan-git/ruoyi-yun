@@ -365,7 +365,7 @@
       <EquipmentList ref="equipmentList"  :sid="equipment.sid" :id="equipment.id" @ok="equipmentForOkFun"></EquipmentList>
     </el-dialog>
     <!--采集策略-->
-    <el-dialog :title="strategy.title" :visible.sync="strategy.open" width="700px" append-to-body>
+    <el-dialog :title="strategy.title" :visible.sync="strategy.open" v-if="strategy.open" width="700px" append-to-body>
       <StrategyForm ref="strategyForm" :equipmentId="strategy.equipmentId" :sid="strategy.sid"  @ok="strategyForOkFun"></StrategyForm>
     </el-dialog>
     <!--采集仪-->

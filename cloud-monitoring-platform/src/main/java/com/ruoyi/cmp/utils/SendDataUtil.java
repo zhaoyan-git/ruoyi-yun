@@ -20,20 +20,20 @@ public class SendDataUtil {
         if (null != dtuId) {
             // 根据网关ID获取从站地址列表
             ConfigureSensor configureSensorCondition = new ConfigureSensor();
-            configureSensorCondition.setDtuId（dtuId）;
+            configureSensorCondition.setDtuId(dtuId);
             List<ConfigureSensor> configureSensorList = configureSensorMapper.selectConfigureSensorList(configureSensorCondition);
 
             if (null != configureSensorList) {
                 ConfigureOrderMapper ConfigureOrderMapper = (ConfigureOrderMapper) SpringContextUtil.getBean(ConfigureOrderMapper.class);
-                for(ConfigureSensor configureSensor : configureSensorList){
+                for (ConfigureSensor configureSensor : configureSensorList) {
                     ConfigureOrder configureOrderCondition = new ConfigureOrder();
                     configureOrderCondition.setOrderType("03");//查询03  下发06
                     configureOrderCondition.setSensorId(configureSensor.getId());
                     List<ConfigureOrder> configureOrderList = ConfigureOrderMapper.selectConfigureOrderList(configureOrderCondition);
-                    if(null != configureOrderList){
+                    if (null != configureOrderList) {
                         ConfigureOrder configureOrder = configureOrderList.get(0);
                         for (Channel channel : BootNettyChannelInboundHandlerAdapter.users) {
-                           ChannelId channelId = new CustomChannelId(redisCache.getCacheObject(dtuId.toString()));//获取与dtu绑定的通道id
+                            ChannelId channelId = new CustomChannelId(redisCache.getCacheObject(dtuId.toString()));//获取与dtu绑定的通道id
                             if (channel.id().asLongText().equals(channelId.asLongText())) {//通道一致则发送报文
                                 String str = "";
 

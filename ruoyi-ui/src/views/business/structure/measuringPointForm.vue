@@ -99,6 +99,7 @@
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import eleTree from "@/views/business/structure/eleTree";
+import { notPagelistDtu } from "@/api/business/dtu";
 import {
   getMeasuringPointTreeFun,
   saveNodeInfoFun,
@@ -135,8 +136,6 @@ export default {
       open: false,
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
         deptId: null,
         product: null,
         model: null,
@@ -322,9 +321,11 @@ export default {
     },
     /**获取设备列表*/
     getEquimentListFun() {
+      debugger
       var _this = this;
       _this.equipmentList = [];
-      listEquipment(this.queryParams).then(res => {
+      this.queryParams.businessId = this.sid;
+      notPagelistDtu(this.queryParams).then(res => {
         if (res.code == 200) {
           for (let index in res.rows) {
             _this.equipmentList.push({

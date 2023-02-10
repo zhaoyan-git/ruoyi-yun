@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.task;
 
+import com.ruoyi.cmp.utils.SendDataUtil;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
 
@@ -14,8 +15,8 @@ public class RyTask {
         System.out.println(StringUtils.format("执行多参方法： 字符串类型{}，布尔类型{}，长整型{}，浮点型{}，整形{}", s, b, l, d, i));
     }
 
-    public void ryParams(String params) {
-        System.out.println("执行有参方法：" + params);
+    public void ryParams(Long dtuId) {
+        SendDataUtil.sendRequest(dtuId);
     }
 
     public void ryNoParams() {

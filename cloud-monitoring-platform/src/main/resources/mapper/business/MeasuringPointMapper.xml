@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select mp.id, mp.isBenchmark,mp.benchmarkValue,mp.name, mp.mf_id, mp.data_source_type_id, mp.equipment_id, mp.group_name, mp.structure_id, mp.lev,
                mp.parent_id, mp.create_by, mp.create_time, mp.update_by, mp.update_time , a.name as equipment_name, c.dict_label as mf_name
         from measuring_point mp
-        left join equipment a on mp.equipment_id = a.id
+        left join configure_dtu a on mp.equipment_id = a.id
         left join sys_dict_data c on mp.mf_id = c.dict_value and c.dict_type = 'monitoring_factors'
     </sql>
 
