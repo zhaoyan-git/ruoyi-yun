@@ -183,7 +183,6 @@ export default {
   },
   created() {
     this.getTreeselect();
-    debugger;
     if(this.id){
       this.handleUpdate(this.id);
     }
@@ -221,7 +220,6 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          debugger
           this.form.businessId = this.sid;
           if (this.form.id != null) {
             updateDtu(this.form).then(response => {

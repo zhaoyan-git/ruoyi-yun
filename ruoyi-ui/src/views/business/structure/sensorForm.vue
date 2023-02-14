@@ -318,7 +318,6 @@ export default {
       var queryForm = {};
       queryForm.type = '2';
       getTreeselectList(queryForm).then(response => {
-        debugger
         this.deptOptions = response.data;
       });
     },

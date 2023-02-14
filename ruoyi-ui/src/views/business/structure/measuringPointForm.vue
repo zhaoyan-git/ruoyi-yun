@@ -321,7 +321,6 @@ export default {
     },
     /**获取设备列表*/
     getEquimentListFun() {
-      debugger
       var _this = this;
       _this.equipmentList = [];
       this.queryParams.businessId = this.sid;
