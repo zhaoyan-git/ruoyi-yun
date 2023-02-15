@@ -496,7 +496,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         cause.printStackTrace();
         ctx.close();//抛出异常，断开与客户端的连接
         System.out.println("exceptionCaught:" + clientIp + ctx.name());
-
+        users.remove(ctx.channel());
 
         IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
         DeviceGateway deviceGatewayCondition = new DeviceGateway();
@@ -514,8 +514,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                 deviceGatewayService.updateDeviceGateway(deviceGateway);
                 //保存通道id key dtuid value 通道id
 
-                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
-                users.remove(ctx.channel());
+
 
                 // 将channelid储存到缓存
                 RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
@@ -552,7 +551,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         System.out.println("channelActive:" + clientIp + ctx.name());
-
+        users.add(ctx.channel());
         IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
         DeviceGateway deviceGatewayCondition = new DeviceGateway();
         deviceGatewayCondition.setIp(clientIp);
@@ -563,14 +562,12 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
             for (DeviceGateway item : deviceGatewayList) {
                 deviceGateway = item;
             }
-
             if (null != deviceGateway) {
                 deviceGateway.setOnlineFlag("1");
                 deviceGatewayService.updateDeviceGateway(deviceGateway);
                 //保存通道id key dtuid value 通道id
 
                 //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
-                users.add(ctx.channel());
 
                 // 将channelid储存到缓存
                 RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
@@ -597,6 +594,8 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         String clientIp = insocket.getAddress().getHostAddress();
         ctx.close(); //断开连接时，必须关闭，否则造成资源浪费，并发量很大情况下可能造成宕机
         System.out.println("channelInactive:" + clientIp + ctx.name());
+        //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
+        users.remove(ctx.channel());
         IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
         DeviceGateway deviceGatewayCondition = new DeviceGateway();
         deviceGatewayCondition.setIp(clientIp);
@@ -613,8 +612,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                 deviceGatewayService.updateDeviceGateway(deviceGateway);
                 //保存通道id key dtuid value 通道id
 
-                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
-                users.remove(ctx.channel());
+
 
                 // 将channelid储存到缓存
                 RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
@@ -650,6 +648,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         String clientIp = insocket.getAddress().getHostAddress();
         ctx.close();//超时时断开连接
         System.out.println("userEventTriggered:" + clientIp + ctx.name());
+        users.remove(ctx.channel());
 
         IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
         DeviceGateway deviceGatewayCondition = new DeviceGateway();
@@ -667,8 +666,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                 deviceGatewayService.updateDeviceGateway(deviceGateway);
                 //保存通道id key dtuid value 通道id
 
-                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
-                users.remove(ctx.channel());
+
 
                 // 将channelid储存到缓存
                 RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
