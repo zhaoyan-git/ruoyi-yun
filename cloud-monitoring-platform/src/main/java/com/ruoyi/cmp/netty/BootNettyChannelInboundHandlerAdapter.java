@@ -120,7 +120,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                     deviceGateway.setOnlineFlag("1");
                     deviceGatewayService.updateDeviceGateway(deviceGateway);
                     System.out.println("channelActive:" + clientIp + ctx.name());
-                    users.add(ctx.channel());
+//                    users.add(ctx.channel());
                     return;
                 } else {
                     // 不符合结构
