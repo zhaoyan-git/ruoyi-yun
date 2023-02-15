@@ -22,6 +22,7 @@ public class SendDataUtil {
             ConfigureSensor configureSensorCondition = new ConfigureSensor();
             configureSensorCondition.setDtuId(dtuId);
             List<ConfigureSensor> configureSensorList = configureSensorMapper.selectConfigureSensorList(configureSensorCondition);
+            System.out.println("----------dtuId：" + dtuId);
 
             if (null != configureSensorList) {
                 ConfigureOrderMapper ConfigureOrderMapper = (ConfigureOrderMapper) SpringContextUtil.getBean(ConfigureOrderMapper.class);
@@ -29,11 +30,19 @@ public class SendDataUtil {
                     ConfigureOrder configureOrderCondition = new ConfigureOrder();
                     configureOrderCondition.setOrderType("03");//查询03  下发06
                     configureOrderCondition.setSensorId(configureSensor.getId());
+                    System.out.println("----------OrderType：" + "03");
+                    System.out.println("----------sensorId：" + configureSensor.getId());
+
                     List<ConfigureOrder> configureOrderList = ConfigureOrderMapper.selectConfigureOrderList(configureOrderCondition);
                     if (null != configureOrderList) {
                         ConfigureOrder configureOrder = configureOrderList.get(0);
+                        System.out.println("----------configureOrder：" + configureOrder.getId());
+                        System.out.println("----------users：" + BootNettyChannelInboundHandlerAdapter.users);
                         for (Channel channel : BootNettyChannelInboundHandlerAdapter.users) {
                             ChannelId channelId = new CustomChannelId(redisCache.getCacheObject(dtuId.toString()));//获取与dtu绑定的通道id
+                            System.out.println("通道1：" + channelId.asLongText());
+                            System.out.println("通道2：" + channel.id().asLongText());
+
                             if (channel.id().asLongText().equals(channelId.asLongText())) {//通道一致则发送报文
                                 String str = "";
 

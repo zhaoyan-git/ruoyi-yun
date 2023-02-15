@@ -119,7 +119,8 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                     deviceGateway.setIp(clientIp);
                     deviceGateway.setOnlineFlag("1");
                     deviceGatewayService.updateDeviceGateway(deviceGateway);
-
+                    System.out.println("channelActive:" + clientIp + ctx.name());
+                    users.add(ctx.channel());
                     return;
                 } else {
                     // 不符合结构
@@ -258,7 +259,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
                         deviceGateway.setOnlineFlag("1");
                         deviceGatewayService.updateDeviceGateway(deviceGateway);
                         //保存通道id key dtuid value 通道id
-                        redisCache.setCacheObject(deviceGateway.getDtuId(),ctx.channel().id());
+                        redisCache.setCacheObject(deviceGateway.getDtuId(),ctx.channel().id().asLongText());
                         return;
                     } else {
                         // 不符合结构
@@ -326,7 +327,7 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
             //ip
             deviceGatewayCondition.setIp(clientIp);
             //在线设备状态
-            deviceGatewayCondition.setOnlineFlag("Y");
+            deviceGatewayCondition.setOnlineFlag("1");
             deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
             configureDtuService = (IConfigureDtuService) SpringContextUtil.getBean(IConfigureDtuService.class);
             List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
@@ -344,11 +345,11 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
 
                     ConfigureSensorData configureSensorDataCondition = new ConfigureSensorData();
                     //通过网关--> DTU--> 设备 --> 传感器
-                    ConfigureDtu dtu = configureDtuService.selectConfigureDtuById(Long.parseLong(deviceGateway.getDtuId()));
+//                    ConfigureDtu dtu = configureDtuService.selectConfigureDtuById(Long.parseLong(deviceGateway.getDtuId()));
                     ConfigureSensor configureSensorCondition = new ConfigureSensor();
                     /*configureSensorCondition.setBusinessId(deviceGateway.getId());*/
                     configureSensorCondition.setNo(slaveUnitId);
-                    configureSensorCondition.setEquipmentId(dtu.getEquipmentId());
+                    configureSensorCondition.setDtuId(Long.parseLong(deviceGateway.getDtuId()));
                     configureSensorService = (IConfigureSensorService) SpringContextUtil.getBean(IConfigureSensorService.class);
 
                     List<ConfigureSensor> configureSensorList = configureSensorService.selectConfigureSensorList(configureSensorCondition);
@@ -494,7 +495,37 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         String clientIp = insocket.getAddress().getHostAddress();
         cause.printStackTrace();
         ctx.close();//抛出异常，断开与客户端的连接
+        System.out.println("exceptionCaught:" + clientIp + ctx.name());
 
+
+        IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+        DeviceGateway deviceGatewayCondition = new DeviceGateway();
+        deviceGatewayCondition.setIp(clientIp);
+        List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+        if (null != deviceGatewayList) {
+            DeviceGateway deviceGateway = null;
+
+            for (DeviceGateway item : deviceGatewayList) {
+                deviceGateway = item;
+            }
+
+            if (null != deviceGateway) {
+                deviceGateway.setOnlineFlag("0");
+                deviceGatewayService.updateDeviceGateway(deviceGateway);
+                //保存通道id key dtuid value 通道id
+
+                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
+                users.remove(ctx.channel());
+
+                // 将channelid储存到缓存
+                RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
+                redisCache.setCacheObject(deviceGateway.getDtuId().toString(), ctx.channel().id().asLongText());
+            } else {
+
+            }
+        } else {
+
+        }
 //        // 根据IP获取DTU信息
 //        IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
 //        WxcxcDeviceGateway wxcxcDeviceGateway = getDeviceGatewayByIp(clientIp);
@@ -520,18 +551,37 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         ctx.channel().read();
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
+        System.out.println("channelActive:" + clientIp + ctx.name());
 
-//        // 根据IP获取DTU信息
-//        IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
-//        WxcxcDeviceGateway wxcxcDeviceGateway = getDeviceGatewayByIp(clientIp);
-//
-//        //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
-//        System.out.println("channelActive:" + clientIp + ctx.name());
-//        users.add(ctx.channel());
-//
-//        // 将channelid储存到缓存
-//        RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
-//        redisCache.setCacheObject(wxcxcDeviceGateway.getId().toString(), ctx.channel().id().asLongText());
+        IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+        DeviceGateway deviceGatewayCondition = new DeviceGateway();
+        deviceGatewayCondition.setIp(clientIp);
+        List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+        if (null != deviceGatewayList) {
+            DeviceGateway deviceGateway = null;
+
+            for (DeviceGateway item : deviceGatewayList) {
+                deviceGateway = item;
+            }
+
+            if (null != deviceGateway) {
+                deviceGateway.setOnlineFlag("1");
+                deviceGatewayService.updateDeviceGateway(deviceGateway);
+                //保存通道id key dtuid value 通道id
+
+                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
+                users.add(ctx.channel());
+
+                // 将channelid储存到缓存
+                RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
+                redisCache.setCacheObject(deviceGateway.getDtuId().toString(), ctx.channel().id().asLongText());
+            } else {
+
+            }
+        } else {
+
+        }
+
     }
 
     /**
@@ -546,8 +596,35 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         ctx.close(); //断开连接时，必须关闭，否则造成资源浪费，并发量很大情况下可能造成宕机
-        System.out.println("channelInactive:" + clientIp);
+        System.out.println("channelInactive:" + clientIp + ctx.name());
+        IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+        DeviceGateway deviceGatewayCondition = new DeviceGateway();
+        deviceGatewayCondition.setIp(clientIp);
+        List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+        if (null != deviceGatewayList) {
+            DeviceGateway deviceGateway = null;
 
+            for (DeviceGateway item : deviceGatewayList) {
+                deviceGateway = item;
+            }
+
+            if (null != deviceGateway) {
+                deviceGateway.setOnlineFlag("0");
+                deviceGatewayService.updateDeviceGateway(deviceGateway);
+                //保存通道id key dtuid value 通道id
+
+                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
+                users.remove(ctx.channel());
+
+                // 将channelid储存到缓存
+                RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
+                redisCache.setCacheObject(deviceGateway.getDtuId().toString(), ctx.channel().id().asLongText());
+            } else {
+
+            }
+        } else {
+
+        }
 //        // 根据IP获取DTU信息
 //        IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
 //        WxcxcDeviceGateway wxcxcDeviceGateway = getDeviceGatewayByIp(clientIp);
@@ -572,7 +649,36 @@ public class BootNettyChannelInboundHandlerAdapter extends ChannelInboundHandler
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         ctx.close();//超时时断开连接
-        System.out.println("userEventTriggered:" + clientIp);
+        System.out.println("userEventTriggered:" + clientIp + ctx.name());
+
+        IDeviceGatewayService deviceGatewayService = (IDeviceGatewayService) SpringContextUtil.getBean(IDeviceGatewayService.class);
+        DeviceGateway deviceGatewayCondition = new DeviceGateway();
+        deviceGatewayCondition.setIp(clientIp);
+        List<DeviceGateway> deviceGatewayList = deviceGatewayService.selectDeviceGatewayList(deviceGatewayCondition);
+        if (null != deviceGatewayList) {
+            DeviceGateway deviceGateway = null;
+
+            for (DeviceGateway item : deviceGatewayList) {
+                deviceGateway = item;
+            }
+
+            if (null != deviceGateway) {
+                deviceGateway.setOnlineFlag("0");
+                deviceGatewayService.updateDeviceGateway(deviceGateway);
+                //保存通道id key dtuid value 通道id
+
+                //此处不能使用ctx.close()，否则客户端始终无法与服务端建立连接
+                users.remove(ctx.channel());
+
+                // 将channelid储存到缓存
+                RedisCache redisCache = (RedisCache) SpringContextUtil.getBean(RedisCache.class);
+                redisCache.setCacheObject(deviceGateway.getDtuId().toString(), ctx.channel().id().asLongText());
+            } else {
+
+            }
+        } else {
+
+        }
 //
 //        // 根据IP获取DTU信息
 //        IWxcxcDeviceGatewayService wxcxcDeviceGatewayService = (IWxcxcDeviceGatewayService) SpringContextUtil.getBean(IWxcxcDeviceGatewayService.class);
