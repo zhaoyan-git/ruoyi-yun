@@ -69,10 +69,10 @@ public class CreateAlarmRecordUtils {
         //结构物,设备 确定唯一测点信息
         measuringPointParam.setStructureId(structure.getId());
         measuringPointParam.setLev(3L);
-        measuringPointParam.setEquipmentId(configureSensor.getEquipmentId() + "");
+        measuringPointParam.setEquipmentId(configureSensor.getDtuId() + "");
         List<MeasuringPoint> measuringPoints = createAlarmRecordUtils.measuringPointMapper.selectMeasuringPointList(measuringPointParam);
         MeasuringPoint measuringPoint = new MeasuringPoint();
-        if (measuringPoints != null) {
+        if (measuringPoints != null && measuringPoints.size() > 0) {
             measuringPoint = measuringPoints.get(0);
         }
         if (measuringPoint == null) {
@@ -145,10 +145,10 @@ public class CreateAlarmRecordUtils {
             }
         }
         //结构物,设备 确定唯一测点信息
-        measuringPointParam.setEquipmentId(configureSensor.getEquipmentId() + "");
+        measuringPointParam.setEquipmentId(configureSensor.getDtuId() + "");
         measuringPoints = createAlarmRecordUtils.measuringPointMapper.selectMeasuringPointList(measuringPointParam);
         MeasuringPoint measuringPoint = new MeasuringPoint();
-        if (measuringPoints != null) {
+        if (measuringPoints != null && measuringPoints.size() > 0) {
             measuringPoint = measuringPoints.get(0);
         }
         if (measuringPoint == null) {
